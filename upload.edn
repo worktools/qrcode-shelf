@@ -1,0 +1,6 @@
+
+{:host "fe.jimu.io"
+ :uploads [{:from "dist/*"
+            :to "cdn/qrcode-shelf/"}
+           {:from "dist/{index.html,manifest.json}"
+            :to "repo/jimengio/qrcode-shelf/"}]}
