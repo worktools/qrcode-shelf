@@ -1,9 +1,21 @@
 
-(ns app.updater (:require [respo.cursor :refer [mutate]]))
+(ns app.updater
+  (:require [respo.cursor :refer [mutate]]
+            [app.schema :as schema]
+            [medley.core :refer [dissoc-in]]))
 
 (defn updater [store op op-data op-id op-time]
   (case op
     :states (update store :states (mutate op-data))
     :content (assoc store :content op-data)
     :hydrate-storage op-data
+    :add-code
+      (assoc-in
+       store
+       [:codes op-id]
+       (merge schema/code {:id op-id, :code op-data, :time op-time}))
+    :add-code-url (assoc store :code-url op-data)
+    :touch-code (assoc-in store [:codes op-data :time] op-data)
+    :pointer (assoc store :pointer op-data)
+    :remove-code (-> store (assoc :pointer nil) (dissoc-in [:codes op-data]))
     store))

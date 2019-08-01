@@ -1,4 +1,6 @@
 
 (ns app.schema )
 
-(def store {:states {}, :content ""})
+(def code {:id nil, :code nil, :timestamp nil})
+
+(def store {:states {}, :codes (do code {}), :pointer nil, :code-url nil})
