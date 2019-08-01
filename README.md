@@ -2,6 +2,8 @@
 QRCode Shelf
 ----
 
+http://fe.jimu.io/qrcode-shelf/
+
 > List of QRCodes...
 
 TODO

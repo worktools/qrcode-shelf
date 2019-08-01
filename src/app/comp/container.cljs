@@ -59,7 +59,13 @@
           {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
            :text "Add new code",
            :button-text "Render"}
-          (fn [result d! m!] (when-not (string/blank? result) (d! :add-code result)))))]]))
+          (fn [result d! m!]
+            (when-not (string/blank? result)
+              (d! :add-code result)
+              (-> result
+                  qrcode/toDataURL
+                  (.then (fn [url] (d! :add-code-url url)))
+                  (.catch (fn [error] (js/console.error error))))))))]]))
     (if (some? (:pointer store))
       (div
        {:style (merge ui/expand ui/column)}
@@ -70,9 +76,11 @@
          :arrow-up
          {:font-size 20, :color (hsl 200 80 80), :cursor :pointer}
          (fn [e d! m!] (d! :touch-code (:pointer store)))))
-       (div
-        {:style (merge ui/expand ui/center)}
-        (comp-qrcode (get-in store [:codes (:pointer store) :code]) (get store :code-url)))
+       (let [code (get-in store [:codes (:pointer store) :code])]
+         (div
+          {:style (merge ui/expand ui/center)}
+          (<> code {:font-size 20, :font-family ui/font-code})
+          (comp-qrcode code (get store :code-url))))
        (div
         {:style (merge ui/row-parted {:padding 16})}
         (span nil)
@@ -81,7 +89,15 @@
          comp-confirm
          states
          {:trigger (comp-i :x-circle 20 (hsl 0 80 70))}
-         (fn [e d! m!] (d! :remove-code (:pointer store))))))
+         (fn [e d! m!]
+           (d! :remove-code (:pointer store))
+           (let [new-pointer (first (keys (dissoc (:codes store) (:pointer store))))
+                 next-code (get-in store [:codes new-pointer :code])]
+             (d! :pointer new-pointer)
+             (-> next-code
+                 qrcode/toDataURL
+                 (.then (fn [url] (d! :add-code-url url)))
+                 (.catch (fn [error] (js/console.error error)))))))))
       (div
        {:style (merge
                 ui/expand
