@@ -16,7 +16,7 @@
            (merge schema/code {:id op-id, :code op-data, :time op-time}))
           (assoc :pointer op-id))
     :add-code-url (assoc store :code-url op-data)
-    :touch-code (assoc-in store [:codes op-data :time] op-data)
+    :touch-code (assoc-in store [:codes op-data :time] op-time)
     :pointer (assoc store :pointer op-data)
     :remove-code (-> store (dissoc-in [:codes op-data]) (assoc :pointer nil))
     store))

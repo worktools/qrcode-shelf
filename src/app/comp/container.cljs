@@ -12,7 +12,8 @@
             [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm]]
             [clojure.string :as string]
             [app.comp.qrcode :refer [comp-qrcode]]
-            ["qrcode" :as qrcode]))
+            ["qrcode" :as qrcode]
+            [applied-science.js-interop :as j]))
 
 (def style-card
   {:padding "12px 12px",
@@ -29,9 +30,26 @@
  (let [store (:store reel), states (:states store)]
    (div
     {:style (merge ui/global ui/fullscreen ui/row)}
-    (list->
-     {:style {:background-color (hsl 0 0 96), :width 300}}
-     (concat
+    (div
+     {:style (merge ui/column {:background-color (hsl 0 0 96), :width 300})}
+     (div
+      {:style (merge ui/center {:padding 16})}
+      (cursor->
+       :create
+       comp-prompt
+       states
+       {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
+        :text "Add new code",
+        :button-text "Render"}
+       (fn [result d! m!]
+         (when-not (string/blank? result)
+           (d! :add-code result)
+           (-> result
+               qrcode/toDataURL
+               (.then (fn [url] (d! :add-code-url url)))
+               (.catch (fn [error] (js/console.error error))))))))
+     (list->
+      {:style (merge ui/expand {:padding-bottom 160}), :class-name "scroll-area"}
       (->> (:codes store)
            vals
            (sort-by (fn [code] (- 0 (:time code))))
@@ -48,24 +66,7 @@
                        qrcode/toDataURL
                        (.then (fn [url] (d! :add-code-url url)))
                        (.catch (fn [error] (js/console.error error)))))}
-                (<> (:code code)))])))
-      [["create"
-        (div
-         {:style (merge ui/center {:padding 16})}
-         (cursor->
-          :create
-          comp-prompt
-          states
-          {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
-           :text "Add new code",
-           :button-text "Render"}
-          (fn [result d! m!]
-            (when-not (string/blank? result)
-              (d! :add-code result)
-              (-> result
-                  qrcode/toDataURL
-                  (.then (fn [url] (d! :add-code-url url)))
-                  (.catch (fn [error] (js/console.error error))))))))]]))
+                (<> (:code code)))])))))
     (if (some? (:pointer store))
       (div
        {:style (merge ui/expand ui/column)}
@@ -75,7 +76,12 @@
         (comp-icon
          :arrow-up
          {:font-size 20, :color (hsl 200 80 80), :cursor :pointer}
-         (fn [e d! m!] (d! :touch-code (:pointer store)))))
+         (fn [e d! m!]
+           (d! :touch-code (:pointer store))
+           (when-let [target (js/document.querySelector ".scroll-area")]
+             (.. target
+                 -firstElementChild
+                 (scrollIntoViewIfNeeded (j/obj :behavior "smooth")))))))
        (let [code (get-in store [:codes (:pointer store) :code])]
          (div
           {:style (merge ui/expand ui/center)}
