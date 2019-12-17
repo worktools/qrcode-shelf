@@ -9,11 +9,29 @@
             [respo-md.comp.md :refer [comp-md]]
             [app.config :refer [dev?]]
             [feather.core :refer [comp-icon comp-i]]
-            [respo-alerts.comp.alerts :refer [comp-prompt comp-confirm]]
+            [respo-alerts.core :refer [comp-prompt comp-confirm]]
             [clojure.string :as string]
             [app.comp.qrcode :refer [comp-qrcode]]
             ["qrcode" :as qrcode]
             [applied-science.js-interop :as j]))
+
+(defcomp
+ comp-note
+ (states code)
+ (div
+  {:style ui/row-middle}
+  (<> (or (:note code) "...") {:color (hsl 0 0 70)})
+  (=< 8 nil)
+  (cursor->
+   :create
+   comp-prompt
+   states
+   {:trigger (comp-i :edit 14 (hsl 0 0 80)),
+    :text "Some note:",
+    :button-text "Add",
+    :initial (:note code)}
+   (fn [result d! m!]
+     (d! :note-code {:id (:id code), :note (if (string/blank? result) nil result)})))))
 
 (def style-card
   {:padding "12px 12px",
@@ -25,48 +43,57 @@
    :overflow :hidden})
 
 (defcomp
+ comp-sidebar
+ (states store)
+ (div
+  {:style (merge ui/column {:background-color (hsl 0 0 96), :width 300})}
+  (div
+   {:style (merge ui/center {:padding 16})}
+   (cursor->
+    :create
+    comp-prompt
+    states
+    {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
+     :text "Add new code",
+     :button-text "Render"}
+    (fn [result d! m!]
+      (when-not (string/blank? result)
+        (d! :add-code result)
+        (-> result
+            qrcode/toDataURL
+            (.then (fn [url] (d! :add-code-url url)))
+            (.catch (fn [error] (js/console.error error))))))))
+  (list->
+   {:style (merge ui/expand {:padding-bottom 160}), :class-name "scroll-area"}
+   (->> (:codes store)
+        vals
+        (sort-by (fn [code] (- 0 (:time code))))
+        (map
+         (fn [code]
+           [(:id code)
+            (div
+             {:style (merge
+                      style-card
+                      (if (= (:id code) (:pointer store)) {:background-color :white})),
+              :on-click (fn [e d! m!]
+                (d! :pointer (:id code))
+                (-> (:code code)
+                    qrcode/toDataURL
+                    (.then (fn [url] (d! :add-code-url url)))
+                    (.catch (fn [error] (js/console.error error)))))}
+             (<> (:code code))
+             (=< 8 nil)
+             (<>
+              (:note code)
+              {:color (hsl 0 0 80), :font-family ui/font-normal, :font-size 12}))]))))))
+
+(defcomp
  comp-container
  (reel)
  (let [store (:store reel), states (:states store)]
    (div
     {:style (merge ui/global ui/fullscreen ui/row)}
-    (div
-     {:style (merge ui/column {:background-color (hsl 0 0 96), :width 300})}
-     (div
-      {:style (merge ui/center {:padding 16})}
-      (cursor->
-       :create
-       comp-prompt
-       states
-       {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
-        :text "Add new code",
-        :button-text "Render"}
-       (fn [result d! m!]
-         (when-not (string/blank? result)
-           (d! :add-code result)
-           (-> result
-               qrcode/toDataURL
-               (.then (fn [url] (d! :add-code-url url)))
-               (.catch (fn [error] (js/console.error error))))))))
-     (list->
-      {:style (merge ui/expand {:padding-bottom 160}), :class-name "scroll-area"}
-      (->> (:codes store)
-           vals
-           (sort-by (fn [code] (- 0 (:time code))))
-           (map
-            (fn [code]
-              [(:id code)
-               (div
-                {:style (merge
-                         style-card
-                         (if (= (:id code) (:pointer store)) {:background-color :white})),
-                 :on-click (fn [e d! m!]
-                   (d! :pointer (:id code))
-                   (-> (:code code)
-                       qrcode/toDataURL
-                       (.then (fn [url] (d! :add-code-url url)))
-                       (.catch (fn [error] (js/console.error error)))))}
-                (<> (:code code)))])))))
+    (comp-sidebar states store)
     (if (some? (:pointer store))
       (div
        {:style (merge ui/expand ui/column)}
@@ -82,10 +109,11 @@
              (.. target
                  -firstElementChild
                  (scrollIntoViewIfNeeded (j/obj :behavior "smooth")))))))
-       (let [code (get-in store [:codes (:pointer store) :code])]
+       (let [code-data (get-in store [:codes (:pointer store)]), code (:code code-data)]
          (div
           {:style (merge ui/expand ui/center)}
           (<> code {:font-size 20, :font-family ui/font-code})
+          (cursor-> :note comp-note states code-data)
           (comp-qrcode code (get store :code-url))))
        (div
         {:style (merge ui/row-parted {:padding 16})}
