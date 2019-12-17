@@ -19,4 +19,7 @@
     :touch-code (assoc-in store [:codes op-data :time] op-time)
     :pointer (assoc store :pointer op-data)
     :remove-code (-> store (dissoc-in [:codes op-data]) (assoc :pointer nil))
+    :note-code
+      (let [code-id (:id op-data), note (:note op-data)]
+        (assoc-in store [:codes code-id :note] note))
     store))
