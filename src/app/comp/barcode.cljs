@@ -22,7 +22,7 @@
        (.then
         (fn [url]
           (-> el (.querySelector "img") (.setAttribute "src" url))
-          (jsbarcode (-> el (.querySelector "img")) code (clj->js {}))))
+          (jsbarcode (-> el (.querySelector "img")) code (clj->js {:displayValue false}))))
        (.catch (fn [error] (js/console.error error))))))
 
 (defcomp comp-barcode (code) [(effect-render-code code) (div {} (img {}))])
