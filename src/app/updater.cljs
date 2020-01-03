@@ -21,4 +21,5 @@
     :note-code
       (let [code-id (:id op-data), note (:note op-data)]
         (assoc-in store [:codes code-id :note] note))
+    :toggle-barcode (update-in store [:codes op-data :barcode?] not)
     store))

@@ -12,6 +12,7 @@
             [respo-alerts.core :refer [comp-prompt comp-confirm]]
             [clojure.string :as string]
             [app.comp.qrcode :refer [comp-qrcode]]
+            [app.comp.barcode :refer [comp-barcode]]
             ["qrcode" :as qrcode]
             [applied-science.js-interop :as j]))
 
@@ -54,6 +55,7 @@
     comp-prompt
     states
     {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
+     :input-style {:font-family ui/font-code},
      :text "Add new code",
      :button-text "Render"}
     (fn [result d! m!] (when-not (string/blank? result) (d! :add-code result)))))
@@ -67,14 +69,16 @@
            [(:id code)
             (div
              {:style (merge
+                      ui/row-middle
                       style-card
                       (if (= (:id code) (:pointer store)) {:background-color :white})),
               :on-click (fn [e d! m!] (d! :pointer (:id code)))}
-             (<> (:code code))
+             (<> (:code code) {:font-size 16})
              (=< 8 nil)
              (<>
               (:note code)
-              {:color (hsl 0 0 80), :font-family ui/font-normal, :font-size 12}))]))))))
+              {:color (hsl 0 0 80), :font-family ui/font-normal, :font-size 12})
+             (if (:barcode? code) (comp-i :bar-chart 16 (hsl 0 0 0))))]))))))
 
 (defcomp
  comp-container
@@ -101,9 +105,16 @@
        (let [code-data (get-in store [:codes (:pointer store)]), code (:code code-data)]
          (div
           {:style (merge ui/expand ui/center)}
-          (<> code {:font-size 20, :font-family ui/font-code})
+          (div
+           {:style ui/row-middle}
+           (<> code {:font-size 20, :font-family ui/font-code})
+           (=< 8 nil)
+           (comp-icon
+            :toggle-right
+            {:size 20, :color (hsl 0 0 80), :font-size 20, :cursor :pointer}
+            (fn [e d! m!] (d! :toggle-barcode (:id code-data)))))
           (cursor-> :note comp-note states code-data)
-          (comp-qrcode code)))
+          (if (:barcode? code-data) (comp-barcode code) (comp-qrcode code))))
        (div
         {:style (merge ui/row-parted {:padding 16})}
         (span nil)
