@@ -1,5 +1,5 @@
 
-(ns app.comp.qrcode
+(ns app.comp.barcode
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo.core
@@ -9,7 +9,8 @@
             [reel.comp.reel :refer [comp-reel]]
             [respo-md.comp.md :refer [comp-md]]
             [app.config :refer [dev?]]
-            ["qrcode" :as qrcode]))
+            ["qrcode" :as qrcode]
+            ["jsbarcode" :as jsbarcode]))
 
 (defeffect
  effect-render-code
@@ -18,7 +19,10 @@
  (when (or (= action :mount) (= action :update))
    (-> code
        qrcode/toDataURL
-       (.then (fn [url] (-> el (.querySelector "img") (.setAttribute "src" url))))
+       (.then
+        (fn [url]
+          (-> el (.querySelector "img") (.setAttribute "src" url))
+          (jsbarcode (-> el (.querySelector "img")) code (clj->js {:displayValue false}))))
        (.catch (fn [error] (js/console.error error))))))
 
-(defcomp comp-qrcode (code) [(effect-render-code code) (div {} (img {}))])
+(defcomp comp-barcode (code) [(effect-render-code code) (div {} (img {}))])
