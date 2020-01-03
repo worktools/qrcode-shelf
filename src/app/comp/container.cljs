@@ -56,13 +56,7 @@
     {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
      :text "Add new code",
      :button-text "Render"}
-    (fn [result d! m!]
-      (when-not (string/blank? result)
-        (d! :add-code result)
-        (-> result
-            qrcode/toDataURL
-            (.then (fn [url] (d! :add-code-url url)))
-            (.catch (fn [error] (js/console.error error))))))))
+    (fn [result d! m!] (when-not (string/blank? result) (d! :add-code result)))))
   (list->
    {:style (merge ui/expand {:padding-bottom 160}), :class-name "scroll-area"}
    (->> (:codes store)
@@ -75,12 +69,7 @@
              {:style (merge
                       style-card
                       (if (= (:id code) (:pointer store)) {:background-color :white})),
-              :on-click (fn [e d! m!]
-                (d! :pointer (:id code))
-                (-> (:code code)
-                    qrcode/toDataURL
-                    (.then (fn [url] (d! :add-code-url url)))
-                    (.catch (fn [error] (js/console.error error)))))}
+              :on-click (fn [e d! m!] (d! :pointer (:id code)))}
              (<> (:code code))
              (=< 8 nil)
              (<>
@@ -114,7 +103,7 @@
           {:style (merge ui/expand ui/center)}
           (<> code {:font-size 20, :font-family ui/font-code})
           (cursor-> :note comp-note states code-data)
-          (comp-qrcode code (get store :code-url))))
+          (comp-qrcode code)))
        (div
         {:style (merge ui/row-parted {:padding 16})}
         (span nil)
@@ -127,11 +116,7 @@
            (d! :remove-code (:pointer store))
            (let [new-pointer (first (keys (dissoc (:codes store) (:pointer store))))
                  next-code (get-in store [:codes new-pointer :code])]
-             (d! :pointer new-pointer)
-             (-> next-code
-                 qrcode/toDataURL
-                 (.then (fn [url] (d! :add-code-url url)))
-                 (.catch (fn [error] (js/console.error error)))))))))
+             (d! :pointer new-pointer))))))
       (div
        {:style (merge
                 ui/expand
