@@ -1281,6 +1281,18 @@
                         :id |mZyzVDDnT
                       |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578286126823) (:text |el) (:id |2PIbvxv6F)
                     :id |6k8VWKUb4
+                  |t $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578299451087)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299451087) (:text |set!) (:id |Qmg4ODk1G)
+                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578299451087)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299451087) (:text |->) (:id |_dJdACTNB)
+                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299451087) (:text |el) (:id |w52aEjzoI)
+                          |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299451087) (:text |.-style) (:id |tj8-c_3bw)
+                          |v $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299451087) (:text |.-flexDirection) (:id |Pcd6av1mE)
+                        :id |iUPjA1eQU
+                      |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299451087) (:text "|\"column-reverse") (:id |5eOohmj7z)
+                    :id |xnRggN_jt
                 :id |7Sajr5vtV
             :id |jNeSbVHFR
         :proc $ {} (:type :expr) (:time 1499755354983) (:id |rksbjOYqpSZ) (:data $ {})
@@ -2055,6 +2067,11 @@
                     :data $ {}
                       |T $ {} (:type :leaf) (:author |root) (:time 1506669345582) (:text |:inline-html) (:id |Bk3Vej_KcTrb)
                       |j $ {} (:type :leaf) (:author |root) (:time 1499755354983) (:text |nil) (:id |Hkp4ls_KcaHb)
+                  |y $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578299699843)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299702829) (:text |:manifest) (:id |vpRj3zNEDleaf)
+                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578299706095) (:text "|\"manifest.json") (:id |IiX-p812q)
+                    :id |vpRj3zNED
           |dev-page $ {} (:type :expr) (:time 1499755354983) (:id |H1R4gi_YqpSb)
             :data $ {}
               |T $ {} (:type :leaf) (:author |root) (:time 1499755354983) (:text |defn) (:id |BkyreiuKc6HZ)
