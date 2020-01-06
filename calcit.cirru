@@ -868,6 +868,11 @@
                                       |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1576554284609) (:text |:width) (:id |3UV_Nzd2UH)
                                       |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1576554284609) (:text |300) (:id |76v5pi2_8n)
                                     :id |wSleixC7bd
+                                  |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578285048416)
+                                    :data $ {}
+                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578285050639) (:text |:max-width) (:id |W9pZir24cleaf)
+                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578285054664) (:text "|\"40%") (:id |xlfD1DeH)
+                                    :id |W9pZir24c
                                 :id |hDPvGIeXU
                             :id |pHi8VFYeN
                         :id |Q0QY8Zl7b

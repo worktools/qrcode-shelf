@@ -47,7 +47,7 @@
  comp-sidebar
  (states store)
  (div
-  {:style (merge ui/column {:background-color (hsl 0 0 96), :width 300})}
+  {:style (merge ui/column {:background-color (hsl 0 0 96), :width 300, :max-width "40%"})}
   (div
    {:style (merge ui/center {:padding 16})}
    (cursor->
