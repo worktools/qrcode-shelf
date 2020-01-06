@@ -88,6 +88,7 @@
  (action el)
  (when (< js/window.innerWidth 800)
    (set! (-> el .-style .-flexDirection) "column")
+   (set! (-> el .-style .-flexDirection) "column-reverse")
    (set! (-> el .-firstElementChild .-style .-maxWidth) "800px")
    (js/console.log (-> el .-style .-maxWidth .-firstElementChild) el)))
 
