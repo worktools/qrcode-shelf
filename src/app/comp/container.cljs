@@ -2,7 +2,9 @@
 (ns app.comp.container
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
-            [respo.core :refer [defcomp cursor-> list-> <> div button textarea span input]]
+            [respo.core
+             :refer
+             [defcomp defeffect cursor-> list-> <> div button textarea span input]]
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]
             [reel.comp.reel :refer [comp-reel]]
@@ -47,7 +49,7 @@
  comp-sidebar
  (states store)
  (div
-  {:style (merge ui/column {:background-color (hsl 0 0 96), :width 300, :max-width "40%"})}
+  {:style (merge ui/column ui/expand {:background-color (hsl 0 0 96), :max-width 360})}
   (div
    {:style (merge ui/center {:padding 16})}
    (cursor->
@@ -80,59 +82,69 @@
               {:color (hsl 0 0 80), :font-family ui/font-normal, :font-size 12})
              (if (:barcode? code) (comp-i :bar-chart 16 (hsl 0 0 0))))]))))))
 
+(defeffect
+ effect-layout
+ ()
+ (action el)
+ (when (< js/window.innerWidth 800)
+   (set! (-> el .-style .-flexDirection) "column")
+   (set! (-> el .-firstElementChild .-style .-maxWidth) "800px")
+   (js/console.log (-> el .-style .-maxWidth .-firstElementChild) el)))
+
 (defcomp
  comp-container
  (reel)
  (let [store (:store reel), states (:states store)]
-   (div
-    {:style (merge ui/global ui/fullscreen ui/row)}
-    (comp-sidebar states store)
-    (if (some? (:pointer store))
-      (div
-       {:style (merge ui/expand ui/column)}
+   [(effect-layout)
+    (div
+     {:style (merge ui/global ui/fullscreen ui/row)}
+     (comp-sidebar states store)
+     (if (some? (:pointer store))
        (div
-        {:style (merge ui/row-parted {:padding 8})}
-        (span nil)
-        (comp-icon
-         :arrow-up
-         {:font-size 20, :color (hsl 200 80 80), :cursor :pointer}
-         (fn [e d! m!]
-           (d! :touch-code (:pointer store))
-           (when-let [target (js/document.querySelector ".scroll-area")]
-             (.. target
-                 -firstElementChild
-                 (scrollIntoViewIfNeeded (j/obj :behavior "smooth")))))))
-       (let [code-data (get-in store [:codes (:pointer store)]), code (:code code-data)]
-         (div
-          {:style (merge ui/expand ui/center)}
+        {:style (merge ui/expand ui/column)}
+        (div
+         {:style (merge ui/row-parted {:padding 8})}
+         (span nil)
+         (comp-icon
+          :arrow-up
+          {:font-size 20, :color (hsl 200 80 80), :cursor :pointer}
+          (fn [e d! m!]
+            (d! :touch-code (:pointer store))
+            (when-let [target (js/document.querySelector ".scroll-area")]
+              (.. target
+                  -firstElementChild
+                  (scrollIntoViewIfNeeded (j/obj :behavior "smooth")))))))
+        (let [code-data (get-in store [:codes (:pointer store)]), code (:code code-data)]
           (div
-           {:style ui/row-middle}
-           (<> code {:font-size 20, :font-family ui/font-code})
-           (=< 8 nil)
-           (comp-icon
-            :toggle-right
-            {:size 20, :color (hsl 0 0 80), :font-size 20, :cursor :pointer}
-            (fn [e d! m!] (d! :toggle-barcode (:id code-data)))))
-          (cursor-> :note comp-note states code-data)
-          (if (:barcode? code-data) (comp-barcode code) (comp-qrcode code))))
+           {:style (merge ui/expand ui/center)}
+           (div
+            {:style ui/row-middle}
+            (<> code {:font-size 20, :font-family ui/font-code})
+            (=< 8 nil)
+            (comp-icon
+             :toggle-right
+             {:size 20, :color (hsl 0 0 80), :font-size 20, :cursor :pointer}
+             (fn [e d! m!] (d! :toggle-barcode (:id code-data)))))
+           (cursor-> :note comp-note states code-data)
+           (if (:barcode? code-data) (comp-barcode code) (comp-qrcode code))))
+        (div
+         {:style (merge ui/row-parted {:padding 16})}
+         (span nil)
+         (cursor->
+          :remove
+          comp-confirm
+          states
+          {:trigger (comp-i :x-circle 20 (hsl 0 80 70))}
+          (fn [e d! m!]
+            (d! :remove-code (:pointer store))
+            (let [new-pointer (first (keys (dissoc (:codes store) (:pointer store))))
+                  next-code (get-in store [:codes new-pointer :code])]
+              (d! :pointer new-pointer))))))
        (div
-        {:style (merge ui/row-parted {:padding 16})}
-        (span nil)
-        (cursor->
-         :remove
-         comp-confirm
-         states
-         {:trigger (comp-i :x-circle 20 (hsl 0 80 70))}
-         (fn [e d! m!]
-           (d! :remove-code (:pointer store))
-           (let [new-pointer (first (keys (dissoc (:codes store) (:pointer store))))
-                 next-code (get-in store [:codes new-pointer :code])]
-             (d! :pointer new-pointer))))))
-      (div
-       {:style (merge
-                ui/expand
-                ui/center
-                {:font-family ui/font-fancy, :font-size 24, :color (hsl 0 0 80)})}
-       (<> "No selection")))
-    (when dev? (cursor-> :reel comp-reel states reel {}))
-    (when dev? (comp-inspect "store" store {:bottom 0})))))
+        {:style (merge
+                 ui/expand
+                 ui/center
+                 {:font-family ui/font-fancy, :font-size 24, :color (hsl 0 0 80)})}
+        (<> "No selection")))
+     (when dev? (cursor-> :reel comp-reel states reel {}))
+     (when dev? (comp-inspect "store" store {:bottom 0})))]))
