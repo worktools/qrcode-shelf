@@ -43,26 +43,20 @@
    :cursor :pointer,
    :border-bottom (str "1px solid " (hsl 0 0 88)),
    :text-overflow :ellipsis,
-   :overflow :hidden})
+   :overflow :hidden,
+   :min-width 60,
+   :height 120,
+   :display :inline-block})
 
 (defcomp
  comp-sidebar
  (states store)
  (div
-  {:style (merge ui/column ui/expand {:background-color (hsl 0 0 96), :max-width 360})}
-  (div
-   {:style (merge ui/center {:padding 16})}
-   (cursor->
-    :create
-    comp-prompt
-    states
-    {:trigger (comp-i :plus-square 20 (hsl 200 80 80)),
-     :input-style {:font-family ui/font-code},
-     :text "Add new code",
-     :button-text "Render"}
-    (fn [result d! m!] (when-not (string/blank? result) (d! :add-code result)))))
+  {:style (merge
+           ui/expand
+           {:background-color (hsl 0 0 96), :display :flex, :padding "10px 60px"})}
   (list->
-   {:style (merge ui/expand {:padding-bottom 160}), :class-name "scroll-area"}
+   {:style (merge {:margin :auto, :white-space :nowrap}), :class-name "scroll-area"}
    (->> (:codes store)
         vals
         (sort-by (fn [code] (- 0 (:time code))))
@@ -71,26 +65,30 @@
            [(:id code)
             (div
              {:style (merge
-                      ui/row-middle
                       style-card
                       (if (= (:id code) (:pointer store)) {:background-color :white})),
               :on-click (fn [e d! m!] (d! :pointer (:id code)))}
-             (<> (:code code) {:font-size 16})
-             (=< 8 nil)
-             (<>
-              (:note code)
-              {:color (hsl 0 0 80), :font-family ui/font-normal, :font-size 12})
-             (if (:barcode? code) (comp-i :bar-chart 16 (hsl 0 0 0))))]))))))
+             (div
+              {}
+              (<> (:code code) {:font-size 16, :line-height "40px", :display :inline-block}))
+             (div
+              {}
+              (<>
+               (:note code)
+               {:color (hsl 0 0 80), :font-family ui/font-normal, :font-size 12}))
+             (div {} (if (:barcode? code) (comp-i :bar-chart 16 (hsl 0 0 0)))))]))))))
 
 (defeffect
  effect-layout
  ()
  (action el)
- (when (< js/window.innerWidth 800)
-   (set! (-> el .-style .-flexDirection) "column")
-   (set! (-> el .-style .-flexDirection) "column-reverse")
-   (set! (-> el .-firstElementChild .-style .-maxWidth) "800px")
-   (js/console.log (-> el .-style .-maxWidth .-firstElementChild) el)))
+ (comment
+  when
+  (< js/window.innerWidth 800)
+  (set! (-> el .-style .-flexDirection) "column")
+  (set! (-> el .-style .-flexDirection) "column-reverse")
+  (set! (-> el .-firstElementChild .-style .-maxWidth) "800px")
+  (js/console.log (-> el .-style .-maxWidth .-firstElementChild) el)))
 
 (defcomp
  comp-container
@@ -98,8 +96,7 @@
  (let [store (:store reel), states (:states store)]
    [(effect-layout)
     (div
-     {:style (merge ui/global ui/fullscreen ui/row)}
-     (comp-sidebar states store)
+     {:style (merge ui/global ui/fullscreen ui/column)}
      (if (some? (:pointer store))
        (div
         {:style (merge ui/expand ui/column)}
@@ -147,5 +144,17 @@
                  ui/center
                  {:font-family ui/font-fancy, :font-size 24, :color (hsl 0 0 80)})}
         (<> "No selection")))
+     (comp-sidebar states store)
+     (div
+      {:style (merge ui/center {:padding 16, :margin :auto})}
+      (cursor->
+       :create
+       comp-prompt
+       states
+       {:trigger (comp-i :plus-square 28 (hsl 200 80 80)),
+        :input-style {:font-family ui/font-code},
+        :text "Add new code",
+        :button-text "Render"}
+       (fn [result d! m!] (when-not (string/blank? result) (d! :add-code result)))))
      (when dev? (cursor-> :reel comp-reel states reel {}))
      (when dev? (comp-inspect "store" store {:bottom 0})))]))

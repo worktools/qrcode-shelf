@@ -23,6 +23,10 @@
         (fn [url]
           (-> el (.querySelector "img") (.setAttribute "src" url))
           (jsbarcode (-> el (.querySelector "img")) code (clj->js {:displayValue false}))))
-       (.catch (fn [error] (js/console.error error))))))
+       (.catch
+        (fn [error]
+          (js/console.error error)
+          (-> el (.querySelector "img") (.setAttribute "src" ""))
+          (-> el (.querySelector "img") (.setAttribute "alt" "Failed to render")))))))
 
 (defcomp comp-barcode (code) [(effect-render-code code) (div {} (img {}))])
