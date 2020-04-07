@@ -40,7 +40,7 @@
        :scripts (map #(-> % :output-name prefix-cdn) assets),
        :ssr "respo-ssr",
        :inline-styles [(slurp "./entry/main.css")],
-       :append-html (slurp "./entry/ga.html")}))))
+       :append-html nil}))))
 
 (defn main! []
   (println "Running mode:" (if config/dev? "dev" "release"))

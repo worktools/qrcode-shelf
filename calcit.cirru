@@ -2326,11 +2326,7 @@
                               |y $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578038129981)
                                 :data $ {}
                                   |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578038132324) (:text |:append-html) (:id |8KwjKv7-hleaf)
-                                  |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578038132679)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578038133531) (:text |slurp) (:id |EEWhzoA8Q)
-                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578038136745) (:text "|\"./entry/ga.html") (:id |9sm67DiI)
-                                    :id |5l0WM5sVw
+                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1586236599153) (:text |nil) (:id |DFsVhWtrEG)
                                 :id |8KwjKv7-h
         :proc $ {} (:type :expr) (:time 1499755354983) (:id |SyOzgodKq6rb) (:data $ {})
       |app.schema $ {}
