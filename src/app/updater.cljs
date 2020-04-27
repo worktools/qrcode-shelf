@@ -1,12 +1,12 @@
 
 (ns app.updater
-  (:require [respo.cursor :refer [mutate]]
+  (:require [respo.cursor :refer [update-states]]
             [app.schema :as schema]
             [medley.core :refer [dissoc-in]]))
 
 (defn updater [store op op-data op-id op-time]
   (case op
-    :states (update store :states (mutate op-data))
+    :states (update-states store op-data)
     :content (assoc store :content op-data)
     :hydrate-storage op-data
     :add-code
@@ -21,5 +21,8 @@
     :note-code
       (let [code-id (:id op-data), note (:note op-data)]
         (assoc-in store [:codes code-id :note] note))
+    :code-format
+      (let [code-id (:id op-data), format (:format op-data)]
+        (assoc-in store [:codes code-id :barcode-format] format))
     :toggle-barcode (update-in store [:codes op-data :barcode?] not)
     store))

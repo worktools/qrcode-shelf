@@ -2,9 +2,7 @@
 (ns app.comp.qrcode
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
-            [respo.core
-             :refer
-             [defcomp defeffect cursor-> <> div button textarea span input img]]
+            [respo.core :refer [defcomp defeffect <> div button textarea span input img]]
             [respo.comp.space :refer [=<]]
             [reel.comp.reel :refer [comp-reel]]
             [respo-md.comp.md :refer [comp-md]]
