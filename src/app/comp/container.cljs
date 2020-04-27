@@ -4,7 +4,7 @@
             [respo-ui.core :as ui]
             [respo.core
              :refer
-             [defcomp defeffect cursor-> list-> <> div button textarea span input]]
+             [defcomp defeffect >> list-> <> div button textarea span input]]
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]
             [reel.comp.reel :refer [comp-reel]]
@@ -25,10 +25,8 @@
   {:style ui/row-middle}
   (<> (or (:note code) "...") {:color (hsl 0 0 70)})
   (=< 8 nil)
-  (cursor->
-   :create
-   comp-prompt
-   states
+  (comp-prompt
+   (>> states :create)
    {:trigger (comp-i :edit 14 (hsl 0 0 80)),
     :text "Some note:",
     :button-text "Add",
@@ -123,16 +121,16 @@
              :toggle-right
              {:size 20, :color (hsl 0 0 80), :font-size 20, :cursor :pointer}
              (fn [e d! m!] (d! :toggle-barcode (:id code-data)))))
-           (cursor-> :note comp-note states code-data)
-           (if (:barcode? code-data) (comp-barcode code) (comp-qrcode code))))
+           (if (:barcode? code-data)
+             (comp-barcode (>> states :barcode) code code-data)
+             (comp-qrcode code))
+           (comp-note (>> states :note) code-data)))
         (div
          {:style (merge ui/row-parted {:padding 16})}
          (span nil)
-         (cursor->
-          :remove
-          comp-confirm
-          states
-          {:trigger (comp-i :x-circle 20 (hsl 0 80 70))}
+         (comp-confirm
+          (>> states :remove)
+          {:trigger (comp-i :x-circle 20 (hsl 0 80 70)), :text "Are use sure to remove?"}
           (fn [e d! m!]
             (d! :remove-code (:pointer store))
             (let [new-pointer (first (keys (dissoc (:codes store) (:pointer store))))
@@ -147,14 +145,12 @@
      (comp-sidebar states store)
      (div
       {:style (merge ui/center {:padding 16, :margin :auto})}
-      (cursor->
-       :create
-       comp-prompt
-       states
+      (comp-prompt
+       (>> states :create)
        {:trigger (comp-i :plus-square 28 (hsl 200 80 80)),
         :input-style {:font-family ui/font-code},
         :text "Add new code",
         :button-text "Render"}
        (fn [result d! m!] (when-not (string/blank? result) (d! :add-code result)))))
-     (when dev? (cursor-> :reel comp-reel states reel {}))
+     (when dev? (comp-reel (>> states :reel) reel {}))
      (when dev? (comp-inspect "store" store {:bottom 0})))]))
