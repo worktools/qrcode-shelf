@@ -1679,7 +1679,7 @@
                   |yT $ {} (:type :expr) (:by |root) (:at 1527868457696) (:id |HJxzN3kyxm)
                     :data $ {}
                       |T $ {} (:type :leaf) (:by |root) (:at 1527868458476) (:text |:icon) (:id |HJxzN3kyxmleaf)
-                      |j $ {} (:type :leaf) (:by |root) (:at 1527868478815) (:text "|\"http://cdn.tiye.me/logo/mvc-works.png") (:id |rJeUB2k1xQ)
+                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587960951880) (:text "|\"http://cdn.tiye.me/logo/qrcode-shelf.png") (:id |rJeUB2k1xQ)
                   |yf $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1544956719115) (:id |E81qVD65QI)
                     :data $ {}
                       |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1544956719115) (:text |:storage-key) (:id |uzAHSBrxME)
