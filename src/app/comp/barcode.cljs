@@ -9,7 +9,8 @@
             [app.config :refer [dev?]]
             ["qrcode" :as qrcode]
             ["jsbarcode" :as jsbarcode]
-            [respo-alerts.comp.container :refer [use-modal-menu]]))
+            [respo-alerts.comp.container :refer [use-modal-menu]]
+            [respo-alerts.core :refer [comp-select]]))
 
 (def barcodes-list
   [{:value :code-128, :display "CODE128"} {:value :gs1-128, :display "GS1-128"}])
@@ -43,25 +44,14 @@
 (defcomp
  comp-barcode
  (states code code-data)
- (let [format-menu (use-modal-menu
-                    (>> states :modal-menu)
-                    {:title "Barcode format",
-                     :items barcodes-list,
-                     :on-result (fn [result d!]
-                       (d! :code-format {:id (:id code-data), :format (:value result)}))})]
-   [(effect-render-code code (:barcode-format code-data))
-    (div
-     {:style ui/center}
-     (span
-      {:on-click (fn [e d!] ((:show format-menu) d!)),
-       :style {:cursor :pointer},
-       :inner-text (or (loop [xs barcodes-list]
-                         (if (empty? xs)
-                           nil
-                           (let [x0 (first xs)]
-                             (if (= (:value x0) (:barcode-format code-data))
-                               (:display x0)
-                               (recur (rest xs))))))
-                       "CODE128")})
-     (div {} (img {}))
-     (:ui format-menu))]))
+ [(effect-render-code code (:barcode-format code-data))
+  (div
+   {:style ui/center}
+   (comp-select
+    (>> states :format)
+    (or (:barcode-format code-data) :code-128)
+    barcodes-list
+    {}
+    (fn [result d!]
+      (if (some? result) (d! :code-format {:id (:id code-data), :format result}))))
+   (div {} (img {})))])

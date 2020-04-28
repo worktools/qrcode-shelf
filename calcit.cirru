@@ -2771,6 +2771,17 @@
                       :data $ {}
                         |T $ {} (:type :leaf) (:author |root) (:time 1507461856706) (:text |[]) (:id |HJ8u1otP3W)
                         |j $ {} (:type :leaf) (:author |root) (:time 1507461858342) (:text |comp-reel) (:id |r1bt1sKwhZ)
+                |yy $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050235396)
+                  :data $ {}
+                    |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050235636) (:text |[]) (:id |AHvfUqjphleaf)
+                    |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050237685) (:text |respo-alerts.core) (:id |-r4BuNMU_W)
+                    |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050238386) (:text |:refer) (:id |0B46G3GLhW)
+                    |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050238572)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050239119) (:text |[]) (:id |57fG_F-wFj)
+                        |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050239551) (:text |comp-select) (:id |OopWW7vXvY)
+                      :id |phTSg3-QZZ
+                  :id |AHvfUqjph
                 |yv $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578035034806)
                   :data $ {}
                     |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578035035553) (:text |[]) (:id |-onNeYCoAleaf)
@@ -2979,247 +2990,111 @@
                   |T $ {} (:type :leaf) (:author |root) (:time 1507461830530) (:text |code) (:id |r1gMj_KqTSZ) (:at 1564634275917) (:by |rJG4IHzWf)
                   |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958785777) (:text |code-data) (:id |DB8qFMc1c4)
                   |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959102724) (:text |states) (:id |PoB2Vt1Ofx)
-              |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958827107)
+              |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578034358682)
                 :data $ {}
-                  |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578034358682)
+                  |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958684774)
                     :data $ {}
-                      |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958684774)
+                      |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564634282740) (:id |G3_u5cw5z)
                         :data $ {}
-                          |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564634282740) (:id |G3_u5cw5z)
+                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564634283719) (:text |div) (:id |G3_u5cw5zleaf)
+                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564634283952) (:id |UKnLRRkAZq)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564634283719) (:text |div) (:id |G3_u5cw5zleaf)
-                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564634283952) (:id |UKnLRRkAZq)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564634284285) (:text |{}) (:id |oE3ZYqaBOG)
-                              |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564635019148) (:id |y0QKkvoHB)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564635020371) (:text |img) (:id |y0QKkvoHBleaf)
-                                  |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564635020731) (:id |dOGErYz_9)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564635021327) (:text |{}) (:id |ZPSjCLv-dx)
-                          |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958686455) (:text |div) (:id |Bqw1N7kZe)
-                          |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958686704)
+                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564634284285) (:text |{}) (:id |oE3ZYqaBOG)
+                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564635019148) (:id |y0QKkvoHB)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958687035) (:text |{}) (:id |06OXxVgz3p)
-                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958687968)
+                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564635020371) (:text |img) (:id |y0QKkvoHBleaf)
+                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1564635020731) (:id |dOGErYz_9)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958690301) (:text |:style) (:id |OfW8xDfzt)
-                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958692698) (:text |ui/center) (:id |rLPAB_nwBd)
-                                :id |Vg69TJnJE7
-                            :id |DIeRwEVOj_
-                          |P $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958693421)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959181762) (:text |span) (:id |ir4gj-PkgXleaf)
-                              |b $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959195077)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959195419) (:text |{}) (:id |Vx3p3bFDBF)
-                                  |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959196574)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959201856) (:text |:on-click) (:id |tCFinWGFZV)
-                                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959202067)
-                                        :data $ {}
-                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959202812) (:text |fn) (:id |K3Scn6SMfz)
-                                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959203009)
-                                            :data $ {}
-                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959203169) (:text |e) (:id |e6xuVhcPTu)
-                                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959203663) (:text |d!) (:id |8IKyQWAerS)
-                                            :id |lmQT1Crum6
-                                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959204075)
-                                            :data $ {}
-                                              |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959209639)
-                                                :data $ {}
-                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959210263) (:text |:show) (:id |LPiCGgMwbleaf)
-                                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959214766) (:text |format-menu) (:id |AdkyAHXN2x)
-                                                :id |5TZFP2nNg
-                                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959219793) (:text |d!) (:id |FPePsRKqxN)
-                                            :id |LPiCGgMwb
-                                        :id |a0dEqw-hp
-                                    :id |mF7XTN3c1K
-                                  |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959241373)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959243125) (:text |:inner-text) (:id |o7ntcE6e2Xleaf)
-                                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959243510)
-                                        :data $ {}
-                                          |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959245860) (:text |or) (:id |x9Xq6QINJ)
-                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959909749) (:text "|\"CODE128") (:id |su_760Ct8y)
-                                          |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959827310)
-                                            :data $ {}
-                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959828779) (:text |loop) (:id |vEqWuudrD)
-                                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959829103)
-                                                :data $ {}
-                                                  |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959829283)
-                                                    :data $ {}
-                                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959831383) (:text |xs) (:id |pXhzSfOhGV)
-                                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959831809) (:text |barcodes-list) (:id |sQNdp3uUr4)
-                                                    :id |vGyx7HwH31
-                                                :id |a9OlCcnGZ
-                                              |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959838549)
-                                                :data $ {}
-                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959838983) (:text |if) (:id |hlZhoe9DGleaf)
-                                                  |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959839193)
-                                                    :data $ {}
-                                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959840554) (:text |empty?) (:id |BDZPFhbGx6)
-                                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959841165) (:text |xs) (:id |aJfdaJdB-D)
-                                                    :id |_YqdQHokP
-                                                  |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959842792) (:text |nil) (:id |8ci8Ja7ElM)
-                                                  |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959843460)
-                                                    :data $ {}
-                                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959844561) (:text |let) (:id |fKbxXnenk)
-                                                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959844754)
-                                                        :data $ {}
-                                                          |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959846228)
-                                                            :data $ {}
-                                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959845917) (:text |x0) (:id |i83V_K6bgi)
-                                                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959847433)
-                                                                :data $ {}
-                                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959849844) (:text |first) (:id |Hx8AXBG8Jp)
-                                                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959848958) (:text |xs) (:id |CIXsV2JZlK)
-                                                                :id |dakANqOWg
-                                                            :id |xp79xBlHM
-                                                        :id |HkT0yZCl5z
-                                                      |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959852411)
-                                                        :data $ {}
-                                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959853388) (:text |if) (:id |31LTX5xrZleaf)
-                                                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959854232)
-                                                            :data $ {}
-                                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959853634) (:text |=) (:id |EHbIdoGFh7)
-                                                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959860113)
-                                                                :data $ {}
-                                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959855853) (:text |x0) (:id |9HEjPKJp7B)
-                                                                  |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959861487) (:text |:value) (:id |HUunkeHO3o)
-                                                                :id |2HDcH_bRy
-                                                              |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959864879)
-                                                                :data $ {}
-                                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959875121) (:text |:barcode-format) (:id |QNqV3INhe)
-                                                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959878427) (:text |code-data) (:id |xULR2wKQZe)
-                                                                :id |GDR7zRoy57
-                                                            :id |PUNgImBGG
-                                                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959880862)
-                                                            :data $ {}
-                                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959884165) (:text |:display) (:id |iDA495bquleaf)
-                                                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959885459) (:text |x0) (:id |5Ny4xJ3m-N)
-                                                            :id |iDA495bqu
-                                                          |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959886981)
-                                                            :data $ {}
-                                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959887829) (:text |recur) (:id |u1wK2yKRFleaf)
-                                                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959890059)
-                                                                :data $ {}
-                                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959890633) (:text |rest) (:id |_1PhfK0Y2)
-                                                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959891140) (:text |xs) (:id |vaWzTMhtIF)
-                                                                :id |2VFVV_eQ3I
-                                                            :id |u1wK2yKRF
-                                                        :id |31LTX5xrZ
-                                                    :id |NOGe4xcAa1
-                                                :id |hlZhoe9DG
-                                            :id |SoKMf3-MyH
-                                        :id |abVV6Tq5Si
-                                    :id |o7ntcE6e2X
-                                  |n $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959925347)
-                                    :data $ {}
-                                      |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959923271)
-                                        :data $ {}
-                                          |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959918794)
-                                            :data $ {}
-                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959919768) (:text |:cursor) (:id |3C8qnIle12leaf)
-                                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959920968) (:text |:pointer) (:id |cxOllI9g_A)
-                                            :id |3C8qnIle12
-                                          |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959924683) (:text |{}) (:id |klTdr4ZJ0i)
-                                        :id |mTklwqwB6I
-                                      |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959926379) (:text |:style) (:id |ILZWFNp-CH)
-                                    :id |3MJNP5R2k
-                                :id |YExDEi0Om
-                            :id |ir4gj-PkgX
-                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959145040)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959146914) (:text |:ui) (:id |y4ErEBd6bleaf)
-                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959216711) (:text |format-menu) (:id |m9W1Fme3DB)
-                            :id |y4ErEBd6b
-                        :id |M0kUJZSBgM
-                      |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578034359225) (:text |[]) (:id |feidEltIN)
-                      |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578034359915)
+                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1564635021327) (:text |{}) (:id |ZPSjCLv-dx)
+                      |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958686455) (:text |div) (:id |Bqw1N7kZe)
+                      |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958686704)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578034363233) (:text |effect-render-code) (:id |PwOB1Fb0_)
-                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578034365068) (:text |code) (:id |NU2pAqHQ)
-                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959496807)
+                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958687035) (:text |{}) (:id |06OXxVgz3p)
+                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958687968)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959499767) (:text |:barcode-format) (:id |OSpoljW4r)
-                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959502030) (:text |code-data) (:id |aMuaodsDQq)
-                            :id |sltEZZF3Sf
-                        :id |GIwdHm5Qu
-                    :id |5cynF_sw7
-                  |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958827674) (:text |let) (:id |nKkyC7QN-G)
-                  |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958827890)
+                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958690301) (:text |:style) (:id |OfW8xDfzt)
+                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958692698) (:text |ui/center) (:id |rLPAB_nwBd)
+                            :id |Vg69TJnJE7
+                        :id |DIeRwEVOj_
+                      |R $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050163284)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050165163) (:text |comp-select) (:id |H-vl8VdjHleaf)
+                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050166490)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050166948) (:text |>>) (:id |YcuLKUQYQH)
+                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050167655) (:text |states) (:id |qdr6YX_vIg)
+                              |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050174093) (:text |:format) (:id |GQjvJI6_0G)
+                            :id |39AhlW8QZ
+                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050294066)
+                            :data $ {}
+                              |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050187811)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050187811) (:text |:barcode-format) (:id |nd0RZBgFSB)
+                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050187811) (:text |code-data) (:id |En6oHjh220)
+                                :id |RodkpraTIW
+                              |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050294601) (:text |or) (:id |cQe0-nM-f9)
+                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050296187) (:text |:code-128) (:id |e68ljPFFI5)
+                            :id |9RtYCKiWJ
+                          |v $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050201998) (:text |barcodes-list) (:id |ByMzCRYDNF)
+                          |x $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050203687)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050204023) (:text |fn) (:id |6UUfKEzaG)
+                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050205231)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050207496) (:text |result) (:id |qdAiX0rV6)
+                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050208444) (:text |d!) (:id |Dco0b1Bs7s)
+                                :id |UaJdJj1KC
+                              |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050318834)
+                                :data $ {}
+                                  |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050220122)
+                                    :data $ {}
+                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |d!) (:id |DFiMU2DrBF)
+                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |:code-format) (:id |bXNB_Vs_Kk)
+                                      |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050220122)
+                                        :data $ {}
+                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |{}) (:id |pmZ34shL3D)
+                                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050220122)
+                                            :data $ {}
+                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |:id) (:id |e0cnM1H9pH)
+                                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050220122)
+                                                :data $ {}
+                                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |:id) (:id |e3syvrPOq1)
+                                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |code-data) (:id |zxiHNMD8IV)
+                                                :id |seWk0ME-D3
+                                            :id |lpSk9qz-Fs
+                                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050220122)
+                                            :data $ {}
+                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |:format) (:id |yrHaZVJaUr)
+                                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050220122) (:text |result) (:id |7xba7etqB6)
+                                            :id |WNfBUHjI16
+                                        :id |CvelSF9uAi
+                                    :id |XNCBVx0pGl
+                                  |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050319345) (:text |if) (:id |-38q3Mzho)
+                                  |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050319558)
+                                    :data $ {}
+                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050320200) (:text |some?) (:id |lgyUKe7in6)
+                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050322642) (:text |result) (:id |w5tnrBAXUb)
+                                    :id |Y9rtXCtXad
+                                :id |szaqeJNHsj
+                            :id |LIOCh6NSix
+                          |w $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1588050250164)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1588050250564) (:text |{}) (:id |l_PeDGu8t-)
+                            :id |DTvvC9qTx
+                        :id |H-vl8VdjH
+                    :id |M0kUJZSBgM
+                  |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578034359225) (:text |[]) (:id |feidEltIN)
+                  |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1578034359915)
                     :data $ {}
-                      |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958828041)
+                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578034363233) (:text |effect-render-code) (:id |PwOB1Fb0_)
+                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1578034365068) (:text |code) (:id |NU2pAqHQ)
+                      |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959496807)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958833381) (:text |format-menu) (:id |PZcbS6XUlZ)
-                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958835885)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958838058) (:text |use-modal-menu) (:id |XxFv25t6S)
-                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958852748)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958853833) (:text |>>) (:id |1V1n0lTgz)
-                                  |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958854759) (:text |states) (:id |2qwKpGvMX)
-                                  |r $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958857170) (:text |:modal-menu) (:id |4l7GBTnDN)
-                                :id |9jPdwJ1ug4
-                              |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958858234)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958859161) (:text |{}) (:id |2DokRaYgAleaf)
-                                  |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958859505)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958860342) (:text |:title) (:id |ueqsyJT_vK)
-                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958867851) (:text "|\"Barcode format") (:id |6LcsoejBj7)
-                                    :id |quXBrgUjSr
-                                  |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587958869191)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587958870871) (:text |:items) (:id |ZJaRygLoMleaf)
-                                      |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959482539) (:text |barcodes-list) (:id |8RMi01FdXkI)
-                                    :id |ZJaRygLoM
-                                  |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959128012)
-                                    :data $ {}
-                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959129723) (:text |:on-result) (:id |qMjlgd0wJgleaf)
-                                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959129934)
-                                        :data $ {}
-                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959131081) (:text |fn) (:id |r7LzqgSV0c)
-                                          |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959131289)
-                                            :data $ {}
-                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959131937) (:text |result) (:id |dWYCp2ToM2)
-                                              |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959132437) (:text |d!) (:id |WgUzN8aLxV)
-                                            :id |nICDXmGkTU
-                                          |r $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959132985)
-                                            :data $ {}
-                                              |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959302820) (:text |d!) (:id |IJjvqYd-5Xleaf)
-                                              |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959372489)
-                                                :data $ {}
-                                                  |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959380590)
-                                                    :data $ {}
-                                                      |T $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959310137)
-                                                        :data $ {}
-                                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959134757) (:text |result) (:id |JBrNVoFB46)
-                                                          |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959311137) (:text |:value) (:id |DxZH6KdhET)
-                                                        :id |m_27I9ZgH
-                                                      |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959381621) (:text |:format) (:id |014cN0EmGZ)
-                                                    :id |rPIlIUnuVC
-                                                  |D $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959373009) (:text |{}) (:id |3Kw3EmmPiu)
-                                                  |L $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959374211)
-                                                    :data $ {}
-                                                      |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959375232) (:text |:id) (:id |W8BL3Ncef)
-                                                      |j $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959376439)
-                                                        :data $ {}
-                                                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959378540) (:text |:id) (:id |VeNL7kAN7m)
-                                                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959457885) (:text |code-data) (:id |eOsyZ34g8n)
-                                                        :id |BGY6oca0e
-                                                    :id |dG3HowsKM
-                                                :id |xXIjmN_q6F
-                                              |b $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959308302) (:text |:code-format) (:id |qa43SVdsR)
-                                            :id |IJjvqYd-5X
-                                        :id |TSdktu0VRw
-                                    :id |qMjlgd0wJg
-                                :id |2DokRaYgA
-                            :id |HEOa4khK5E
-                        :id |-c7sHgwbeM
-                    :id |r0uLNUxXgR
-                :id |c-J_DVcos
+                          |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959499767) (:text |:barcode-format) (:id |OSpoljW4r)
+                          |j $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959502030) (:text |code-data) (:id |aMuaodsDQq)
+                        :id |sltEZZF3Sf
+                    :id |GIwdHm5Qu
+                :id |5cynF_sw7
           |barcodes-list $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1587959482539)
             :data $ {}
               |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1587959482539) (:text |def) (:id |EVNTsd9g9E)
