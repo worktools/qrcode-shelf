@@ -9,8 +9,7 @@
             [app.config :refer [dev?]]
             ["qrcode" :as qrcode]
             ["jsbarcode" :as jsbarcode]
-            [respo-alerts.comp.container :refer [use-modal-menu]]
-            [respo-alerts.core :refer [comp-select]]))
+            [respo-alerts.core :refer [comp-select use-modal-menu]]))
 
 (def barcodes-list
   [{:value :code-128, :display "CODE128"} {:value :gs1-128, :display "GS1-128"}])
