@@ -1,0 +1,1 @@
+export default "Preprocessing failed:\nunknown ns/def in program: respo-alerts.core/comp-confirm";
