@@ -2,7 +2,7 @@
 QRCode Shelf
 ----
 
-http://fe.jimu.io/qrcode-shelf/
+https://r.tiye.me/worktools/qrcode-shelf/
 
 > List of QRCodes...
 
