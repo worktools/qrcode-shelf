@@ -21,15 +21,15 @@ jobs:
 
     - uses: supplypike/setup-bin@v3
       with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.7.0/cr'
+        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.6.15/cr'
         name: 'cr'
-        version: '0.7.0'
+        version: '0.6.15'
 
     - uses: supplypike/setup-bin@v3
       with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.7.0/caps'
+        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.6.15/caps'
         name: 'caps'
-        version: '0.7.0'
+        version: '0.6.15'
 
     - name: Build client with CDN asset URLs
       id: asset-path
