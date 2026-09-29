@@ -27,9 +27,9 @@ jobs:
 
     - uses: supplypike/setup-bin@v3
       with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.6.15/caps'
+        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.7.0/caps'
         name: 'caps'
-        version: '0.6.15'
+        version: '0.7.0'
 
     - name: Build client with CDN asset URLs
       id: asset-path
