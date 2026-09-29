@@ -15,7 +15,7 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
-    "@calcit/procs": "^0.7.0",
+    "@calcit/procs": "0.6.15",
     "feather-icons": "^4.29.0",
     "jsbarcode": "^3.11.5",
     "qrcode": "^1.5.3",
