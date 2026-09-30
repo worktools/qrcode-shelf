@@ -1,9 +1,13 @@
 {
   "name": "qrcode-shelf",
   "version": "0.1.0",
-  "description": "ClojureScript workflow using Calcit Editor",
+  "description": "QR code and barcode shelf built with Calcit",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "compile": "calcit js",
+    "build": "yarn compile && vite build --base=${VITE_BASE_URL:-/}",
+    "dev": "vite"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:mvc-works/calcit-workflow.git"
@@ -12,13 +16,14 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "vite": "^4.3.9"
+    "vite": "8.3.1"
   },
   "dependencies": {
-    "@calcit/procs": "0.6.15",
+    "@calcit/procs": "0.27.0",
     "feather-icons": "^4.29.0",
     "jsbarcode": "^3.11.5",
     "qrcode": "^1.5.3",
     "shortid": "^2.2.16"
-  }
+  },
+  "packageManager": "yarn@4.18.0"
 }

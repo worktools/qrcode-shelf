@@ -9,36 +9,65 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: cos-upload-${{ github.repository }}-${{ github.event_name == 'pull_request' && 'pr' || 'production' }}
+  cancel-in-progress: false
+
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
       with:
         node-version: 24
+        package-manager-cache: false
 
-    - uses: supplypike/setup-bin@v3
-      with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.6.15/cr'
-        name: 'cr'
-        version: '0.6.15'
+    - name: Enable Corepack
+      run: |
+        corepack enable
+        corepack prepare yarn@4.18.0 --activate
 
-    - uses: supplypike/setup-bin@v3
+    - name: Set up Calcit and Caps
+      uses: calcit-lang/setup-calcit@ca701be5a471759e442aa053cd100720bbe1f09f # v1.5.0
       with:
-        uri: 'https://github.com/calcit-lang/calcit/releases/download/0.7.0/caps'
-        name: 'caps'
-        version: '0.7.0'
+        tools: calcit,caps
+        caps-version: "0.1.1"
+
+    - name: Resolve immutable dependencies
+      run: |
+        set -euo pipefail
+        caps --strict --ci
+        yarn install --immutable
+        caps verify --toolchain
+
+    - name: Validate Calcit snapshot and types
+      run: |
+        set -euo pipefail
+        test "$(calcit --version)" = "0.27.0"
+        test ! -e compact.cirru
+        test ! -e package.cirru
+        calcit edit format
+        git diff --exit-code -- calcit.cirru
+        calcit fix --workflow strict --verify --format edn
+        calcit --check-only
+        calcit analyze check-public \
+          --ns app.comp.container --ns app.comp.barcode --ns app.comp.qrcode \
+          --ns app.config --ns app.main --ns app.schema --ns app.updater \
+          --summary-only --format json
+        calcit analyze check-types --summary-only --format json
+        calcit analyze deprecated --summary-only --format json
+        calcit analyze dynamic-methods --summary-only --format json
 
     - name: Build client with CDN asset URLs
       id: asset-path
       env:
         CDN_ORIGIN: https://cos-sh.tiye.me
       run: |
-        caps --ci
-        cr --emit-js --once
-        yarn
+        set -euo pipefail
         if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
           asset_prefix="${GITHUB_REPOSITORY}/pr/"
         else
@@ -48,7 +77,8 @@ jobs:
         echo "VITE_BASE_URL=${VITE_BASE_URL}" >> "$GITHUB_ENV"
         echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
         echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
-        yarn vite build --base="$VITE_BASE_URL"
+        yarn build
+        node --test scripts/qrcode-regression.test.mjs
 
     - name: Upload static assets to COS
       if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
