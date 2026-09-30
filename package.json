@@ -21,7 +21,7 @@
   "dependencies": {
     "@calcit/procs": "0.27.0",
     "feather-icons": "^4.29.0",
-    "jsbarcode": "^3.11.5",
+    "jsbarcode": "3.12.3",
     "qrcode": "^1.5.3",
     "shortid": "^2.2.16"
   },

@@ -1,4 +1,12 @@
 import assert from 'node:assert/strict';
+import JsBarcode from 'jsbarcode';
+
+test('updated barcode package still produces CODE128 binary encoding', () => {
+  const host = {};
+  JsBarcode(host, '1234567890', { format: 'CODE128' });
+  assert.equal(host.encodings[0].text, '1234567890');
+  assert.match(host.encodings[0].data, /^[01]+$/);
+});
 import test from 'node:test';
 import * as clt from '../js-out/calcit.core.mjs';
 import { store, read_codes } from '../js-out/app.schema.mjs';
