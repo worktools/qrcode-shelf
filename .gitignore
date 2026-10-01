@@ -1,5 +1,8 @@
 .compact-inc.cirru
 .calcit-error.cirru
+compact.cirru
+package.cirru
+.yarn/
 
 js-out/
 node_modules/
