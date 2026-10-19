@@ -3,6 +3,7 @@
 compact.cirru
 package.cirru
 .yarn/
+.calcit/
 
 js-out/
 node_modules/
