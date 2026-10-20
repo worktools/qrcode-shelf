@@ -23,9 +23,16 @@
                     :backdrop-style $ {}
                     :items barcodes-list
                     :on-result $ fn (result d!)
+                      hint-fn $ {}
+                        :args $ [] 'Dynamic $ :: 'Fn
+                          {}
+                            :args $ [] 'Enum
+                            :return 'Unit
+                        :return 'Unit
                       d! $ :: :code-format $ {}
-                        :id $ option:unwrap $ get code-data :id
+                        :id $ .unwrap $ get code-data :id
                         :format result
+                      , &unit
               []
                 effect-render-code code $ .unwrap-or (get code-data :barcode-format) nil
                 div
@@ -41,7 +48,8 @@
           :code $ quote $ defeffect effect-render-code (code format) (action el)
             when
               or (= action :mount) (= action :update)
-              match (browser/element-query-selector el |img)
+              match
+                browser/element-query-selector (browser/element-host el) |img
                 (:none) &unit
                 (:some image)
                   try
@@ -76,7 +84,9 @@
           :code $ quote $ defcomp comp-container (reel)
             let
                 store $ :store reel
-                states $ option:unwrap $ get store :states
+                states $ decode-map-as
+                  .unwrap $ get store :states
+                  :: 'Map 'Tag 'Dynamic
                 remove-plugin $ use-confirm (>> states :remove)
                   {} $ :text "|Are use sure to remove?"
                 create-plugin $ use-prompt (>> states :create)
@@ -88,7 +98,7 @@
                 div
                   {} $ :style $ merge ui/global ui/fullscreen ui/column
                   if
-                    some? $ .unwrap-or (get store :pointer) nil
+                    non-nil? $ .unwrap-or (get store :pointer) nil
                     div
                       {} $ :style $ merge ui/expand ui/column
                       div
@@ -100,14 +110,23 @@
                             :color $ hsl 200 80 80
                             :cursor :pointer
                           fn (e d!)
+                            hint-fn $ {}
+                              :args $ [] 'Dynamic $ :: 'Fn
+                                {}
+                                  :args $ [] 'Enum
+                                  :return 'Unit
+                              :return 'Unit
                             d! $ :: :touch-code $ .unwrap-or (get store :pointer) nil
                             scroll-first!
+                            , &unit
                       let
                           code-data $ decode-map-as
-                            option:unwrap $ get-in store $ [] :codes
+                            .unwrap $ get-in store $ [] :codes
                               .unwrap-or (get store :pointer) nil
                             :: 'Map 'Tag 'Dynamic
-                          code $ option:unwrap $ get code-data :code
+                          code $ decode-map-as
+                            .unwrap $ get code-data :code
+                            , 'String
                         div
                           {} $ :style $ merge ui/expand ui/center
                           div
@@ -120,7 +139,14 @@
                                 :font-size 20
                                 :cursor :pointer
                               fn (e d!)
-                                d! $ :: :toggle-barcode $ option:unwrap (get code-data :id)
+                                hint-fn $ {}
+                                  :args $ [] 'Dynamic $ :: 'Fn
+                                    {}
+                                      :args $ [] 'Enum
+                                      :return 'Unit
+                                  :return 'Unit
+                                d! $ :: :toggle-barcode $ .unwrap (get code-data :id)
+                                , &unit
                           if
                             .unwrap-or (get code-data :barcode?) false
                             comp-barcode (>> states :barcode) code code-data
@@ -132,15 +158,23 @@
                         span $ {}
                         span
                           {} $ :on-click $ fn (e d!)
+                            hint-fn $ {}
+                              :args $ [] 'Dynamic $ :: 'Fn
+                                {}
+                                  :args $ [] 'Enum
+                                  :return 'Unit
+                              :return 'Unit
                             .show remove-plugin d! $ fn ()
                               d! $ :: :remove-code $ .unwrap-or (get store :pointer) nil
                               let
-                                  new-pointer $ .unwrap-or
+                                  new-pointer $ match
                                     first $ &set:to-list $ keys
                                       dissoc (schema/read-codes store)
                                         .unwrap-or (get store :pointer) nil
-                                    , nil
+                                    (:some id) id
+                                    (:none) nil
                                 d! $ :: :pointer new-pointer
+                            , &unit
                           comp-i |x-circle 20 $ hsl 0 80 70
                     div
                       {} $ :style $ merge ui/expand ui/center
@@ -155,9 +189,19 @@
                       {}
                         :style $ {} $ :cursor :pointer
                         :on-click $ fn (e d!)
-                          .show create-plugin d! $ fn (result)
-                            when-not (blank? result)
-                              d! $ :: :add-code result
+                          hint-fn $ {}
+                            :args $ [] 'Dynamic $ :: 'Fn
+                              {}
+                                :args $ [] 'Enum
+                                :return 'Unit
+                            :return 'Unit
+                          .show create-plugin d! $ fn (raw)
+                            let
+                                result $ decode-map-as raw 'String
+                              when-not (blank? result)
+                                d! $ :: :add-code result
+                              , &unit
+                          , &unit
                       comp-i |plus-square 28 $ hsl 200 80 80
                   .render remove-plugin
                   .render create-plugin
@@ -172,23 +216,40 @@
             let
                 note-plugin $ use-prompt (>> states :create)
                   {} (:text "|Some note:") (:button-text |Add)
-                    :initial $ .unwrap-or (get code :note) nil
+                    :initial $ decode-map-as
+                      or
+                        .unwrap-or (get code :note) nil
+                        , |
+                      , 'String
               div
                 {} $ :style ui/row-middle
                 <>
-                  or
-                    .unwrap-or (get code :note) nil
-                    , |...
+                  decode-map-as
+                    or
+                      .unwrap-or (get code :note) nil
+                      , |...
+                    , 'String
                   {} $ :color $ hsl 0 0 70
                 =< 8 nil
                 span
                   {}
                     :style $ {} $ :cursor :pointer
                     :on-click $ fn (e d!)
-                      .show note-plugin d! $ fn (result)
-                        d! $ :: :note-code $ {}
-                          :id $ option:unwrap $ get code :id
-                          :note $ if (blank? result) nil result
+                      hint-fn $ {}
+                        :args $ [] 'Dynamic $ :: 'Fn
+                          {}
+                            :args $ [] 'Enum
+                            :return 'Unit
+                        :return 'Unit
+                      .show note-plugin d! $ fn (raw)
+                        let
+                            result $ decode-map-as raw 'String
+                          d! $ :: :note-code $ {}
+                            :id $ decode-map-as
+                              .unwrap $ get code :id
+                              , 'String
+                            :note $ if (blank? result) nil result
+                      , &unit
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
@@ -209,27 +270,48 @@
                   :class-name |scroll-area
                 -> (schema/read-codes store) vals .to-list
                   .sort-by $ fn (code)
-                    - 0 $ option:unwrap $ get code :time
+                    - 0 $ decode-map-as
+                      .unwrap $ get code :time
+                      , 'Number
                   .map $ fn (code)
                     []
-                      option:unwrap $ get code :id
+                      decode-map-as
+                        .unwrap $ get code :id
+                        , 'String
                       div
                         {}
                           :style $ if
                             =
-                              option:unwrap $ get code :id
+                              decode-map-as
+                                .unwrap $ get code :id
+                                , 'String
                               .unwrap-or (get store :pointer) nil
                             assoc style-card :background-color :white
                             , style-card
                           :on-click $ fn (e d!)
-                            d! $ :: :pointer $ option:unwrap (get code :id)
+                            hint-fn $ {}
+                              :args $ [] 'Dynamic $ :: 'Fn
+                                {}
+                                  :args $ [] 'Enum
+                                  :return 'Unit
+                              :return 'Unit
+                            d! $ :: :pointer $ decode-map-as
+                              .unwrap $ get code :id
+                              , 'String
+                            , &unit
                         div ({})
                           <>
-                            option:unwrap $ get code :code
+                            decode-map-as
+                              .unwrap $ get code :code
+                              , 'String
                             {} (:font-size 16) (:line-height |40px) (:display :inline-block)
                         div ({})
                           <>
-                            .unwrap-or (get code :note) nil
+                            decode-map-as
+                              or
+                                .unwrap-or (get code :note) nil
+                                , |
+                              , 'String
                             {}
                               :color $ hsl 0 0 80
                               :font-family ui/font-normal
@@ -301,7 +383,8 @@
           :code $ quote $ defeffect effect-render-code (code) (action el)
             when
               or (= action :mount) (= action :update)
-              match (browser/element-query-selector el |img)
+              match
+                browser/element-query-selector (browser/element-host el) |img
                 (:none) &unit
                 (:some image)
                   let
@@ -343,29 +426,31 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
-            typed/new-reel $ assert-type schema/store $ :: 'Map 'Dynamic 'Dynamic
+          :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
           :schema $ :: 'Ref $ :: 'reel.typed/State 'Enum (:: 'Map 'Dynamic 'Dynamic)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            when config/dev? $ println |Dispatch: op
-            reset! *reel $ typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
-            , &unit
+            if (enum? op)
+              do
+                when config/dev? $ println |Dispatch: op
+                reset! *reel $ typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
+                , &unit
+              raise "|Expected an Enum operation"
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
+            :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
             when config/dev? $ load-console-formatter!
             render-app!
-            add-watch *reel :changes $ fn (s p) (render-app!)
+            add-watch! *reel :changes $ fn (s p) (render-app!)
             listen-devtools! |a dispatch!
             browser/set-before-unload! $ fn (e) (persist-storage!)
             browser/set-interval! persist-storage! 60000
             match
-              browser/storage-get $ option:unwrap $ get config/site :storage-key
+              browser/storage-get $ .unwrap $ get config/site :storage-key
               (:some raw)
                 match (try-parse-cirru-edn raw)
                   (:ok data)
@@ -383,15 +468,15 @@
             :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
-            option:unwrap $ browser/query-selector |.app
+            .unwrap $ respo-browser/query-selector |.app
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'js-ffi.browser/DomElementHost)
+          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
             :args $ []
             :features $ #{} :js-ffi
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
-              option:unwrap $ get config/site :storage-key
+              .unwrap $ get config/site :storage-key
               format-cirru-edn $ :store @*reel
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
@@ -408,7 +493,9 @@
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target) (comp-container @*reel) dispatch!
+            render-with! (mount-target)
+              fn () $ comp-container @*reel
+              , dispatch!
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -421,7 +508,7 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
-            respo.core :refer $ render! clear-cache!
+            respo.core :refer $ render-with! clear-cache!
             app.comp.container :refer $ comp-container
             app.updater :refer $ updater
             app.schema :as schema
@@ -430,6 +517,7 @@
             app.config :as config
             js-ffi.browser :as browser
             js-ffi.shared :as shared
+            respo.ffi.browser :as respo-browser
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'code $ %{} 'CodeEntry (:doc |)
@@ -439,7 +527,7 @@
         'read-codes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-codes (store)
             decode-map-as
-              option:unwrap $ get store :codes
+              .unwrap $ get store :codes
               :: 'Map 'String $ :: 'Map 'Tag 'Dynamic
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -458,40 +546,45 @@
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn updater (store op op-id op-time)
-            match op
-              (:states cursor state) (update-states store cursor state)
-              (:content value) (assoc store :content value)
-              (:hydrate-storage value) value
-              (:add-code value)
-                -> store
-                  assoc-in ([] :codes op-id)
-                    merge schema/code $ {} (:id op-id) (:code value) (:time op-time)
-                  assoc :pointer op-id
-              (:touch-code id)
-                assoc-in store ([] :codes id :time) op-time
-              (:pointer id) (assoc store :pointer id)
-              (:remove-code id)
-                -> store
-                  dissoc-in $ [] :codes id
-                  assoc :pointer nil
-              (:note-code data)
-                assoc-in store
-                  [] :codes
-                    option:unwrap $ get data :id
-                    , :note
-                  .unwrap-or (get data :note) nil
-              (:code-format data)
-                assoc-in store
-                  [] :codes
-                    option:unwrap $ get data :id
-                    , :barcode-format
-                  option:unwrap $ get data :format
-              (:toggle-barcode id)
-                assoc-in store ([] :codes id :barcode?)
-                  not $ .unwrap-or
-                    get-in store $ [] :codes id :barcode?
-                    , false
-              _ $ do (println |Unknown-op: op) store
+            decode-map-as
+              match op
+                (:states cursor state)
+                  update-states store
+                    decode-map-as cursor $ :: 'List 'Dynamic
+                    , state
+                (:content value) (assoc store :content value)
+                (:hydrate-storage value) value
+                (:add-code value)
+                  -> store
+                    assoc-in ([] :codes op-id)
+                      merge schema/code $ {} (:id op-id) (:code value) (:time op-time)
+                    assoc :pointer op-id
+                (:touch-code id)
+                  assoc-in store ([] :codes id :time) op-time
+                (:pointer id) (assoc store :pointer id)
+                (:remove-code id)
+                  -> store
+                    dissoc-in $ [] :codes id
+                    assoc :pointer nil
+                (:note-code data)
+                  assoc-in store
+                    [] :codes
+                      .unwrap $ get data :id
+                      , :note
+                    .unwrap-or (get data :note) nil
+                (:code-format data)
+                  assoc-in store
+                    [] :codes
+                      .unwrap $ get data :id
+                      , :barcode-format
+                    .unwrap $ get data :format
+                (:toggle-barcode id)
+                  assoc-in store ([] :codes id :barcode?)
+                    not $ .unwrap-or
+                      get-in store $ [] :codes id :barcode?
+                      , false
+                _ $ do (println |Unknown-op: op) store
+              :: 'Map 'Dynamic 'Dynamic
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'Enum 'String 'Number
