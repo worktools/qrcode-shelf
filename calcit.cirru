@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |alerts.calcit/ |js-ffi/ |respo-feather.calcit/
-      :type-slots $ {}
+      :type-slots $ {} $ :dispatch-op |app.schema/Op
   :files $ {}
     'app.comp.barcode $ %{} 'FileEntry
       :defs $ {}
@@ -121,8 +121,9 @@
                             , &unit
                       let
                           code-data $ decode-map-as
-                            .unwrap $ get-in store $ [] :codes
-                              .unwrap-or (get store :pointer) nil
+                            .unwrap-or
+                              get-in store $ [] :codes $ .unwrap-or (get store :pointer) nil
+                              , nil
                             :: 'Map 'Tag 'Dynamic
                           code $ decode-map-as
                             .unwrap $ get code-data :code
@@ -439,7 +440,7 @@
               raise "|Expected an Enum operation"
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
+            :args $ [] 'Enum
             :features $ #{} :js-ffi
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
@@ -520,6 +521,28 @@
             respo.ffi.browser :as respo-browser
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'Op $ %{} 'CodeEntry
+          :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Includes the :reel/* controls that comp-reel sends."
+          :code $ quote $ defenum Op
+            :states (:: 'List 'Dynamic) 'Dynamic
+            :content 'Dynamic
+            :hydrate-storage 'Dynamic
+            :add-code 'Dynamic
+            :touch-code 'Dynamic
+            :pointer 'Dynamic
+            :remove-code 'Dynamic
+            :note-code 'Dynamic
+            :code-format 'Dynamic
+            :toggle-barcode 'Dynamic
+            :reel/toggle
+            :reel/recall 'Number
+            :reel/run
+            :reel/step
+            :reel/merge
+            :reel/reset
+            :reel/remove 'Number
+          :examples $ []
+          :schema $ :: 'EnumDef
         'code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def code
             {} (:id nil) (:code nil) (:note nil) (:timestamp nil) (:barcode? false) (:barcode-format nil)
