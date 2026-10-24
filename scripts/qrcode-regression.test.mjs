@@ -66,3 +66,13 @@ test('typed Reel rendering supports both empty and selected shelves', () => {
   assert.match(html, /<img\b/);
   assert.doesNotMatch(html, /No icon:/);
 });
+
+test('clearing a note keeps the saved :note nil shape', () => {
+  let next = apply(store, 'add-code', '1234567890');
+  next = apply(next, 'note-code', clt._$n__$M_(tags.id, 'code-a', tags.note, 'saved-note'));
+  next = apply(next, 'note-code', clt._$n__$M_(tags.id, 'code-a'));
+  const code = clt.option_$o_unwrap(clt.get(read_codes(next), 'code-a'));
+  assert.equal(get(code, 'note'), null);
+  const restored = clt.parse_cirru_edn(clt.format_cirru_edn(next));
+  assert.equal(get(clt.option_$o_unwrap(clt.get(read_codes(restored), 'code-a')), 'note'), null);
+});

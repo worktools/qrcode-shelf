@@ -245,11 +245,12 @@
                       .show note-plugin d! $ fn (raw)
                         let
                             result $ decode-map-as raw 'String
-                          d! $ :: :note-code $ {}
-                            :id $ decode-map-as
+                            id $ decode-map-as
                               .unwrap $ get code :id
                               , 'String
-                            :note $ if (blank? result) nil result
+                          d! $ :: :note-code $ if (blank? result)
+                            {} $ :id id
+                            {} (:id id) (:note result)
                       , &unit
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
