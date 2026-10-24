@@ -196,6 +196,9 @@
                                 :return 'Unit
                             :return 'Unit
                           .show create-plugin d! $ fn (raw)
+                            hint-fn $ {}
+                              :args $ [] 'String
+                              :return 'Unit
                             let
                                 result $ decode-map-as raw 'String
                               when-not (blank? result)
@@ -242,6 +245,9 @@
                             :return 'Unit
                         :return 'Unit
                       .show note-plugin d! $ fn (raw)
+                        hint-fn $ {}
+                          :args $ [] 'String
+                          :return 'Unit
                         let
                             result $ decode-map-as raw 'String
                           d! $ :: :note-code $ {}
