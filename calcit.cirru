@@ -55,10 +55,10 @@
                   try
                     jsbarcode image code $ to-js-data $ merge
                       {} $ :displayValue false
-                      case-default format
-                        {} $ :format |CODE128
+                      match format
                         :gs1-128 $ {} (:format |CODE128) (:ean128 true)
                         :code-128 $ {} $ :format |CODE128
+                        _ $ {} $ :format |CODE128
                     fn (error) (js/console.error error) (browser/element-set-attribute! image |src |) (browser/element-set-attribute! image |alt |Failed-to-render)
             , &unit
           :examples $ []
@@ -170,8 +170,10 @@
                               let
                                   new-pointer $ match
                                     first $ &set:to-list $ keys
-                                      dissoc (schema/read-codes store)
-                                        .unwrap-or (get store :pointer) nil
+                                      let
+                                          codes $ schema/read-codes store
+                                          pointer $ .unwrap-or (get store :pointer) nil
+                                        if (string? pointer) (.dissoc codes pointer) codes
                                     (:some id) id
                                     (:none) nil
                                 d! $ :: :pointer new-pointer
@@ -270,7 +272,7 @@
                 {}
                   :style $ merge $ {} (:margin :auto) (:white-space :nowrap)
                   :class-name |scroll-area
-                -> (schema/read-codes store) vals .to-list
+                -> (schema/read-codes store) distinct-values .to-list
                   .sort-by $ fn (code)
                     - 0 $ decode-map-as
                       .unwrap $ get code :time
