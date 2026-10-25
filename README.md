@@ -10,9 +10,11 @@ TODO
 
 ### Workflow
 
-使用配对的 Calcit / `@calcit/procs` 0.30.1-alpha.5、Node.js 24、Yarn 4.18.0。
-正式 0.30.1 的 CLI/npm 发布配对尚未完成，不能仅根据 release 页面替换版本。
-Respo、Reel、UI、Feather、Alerts 和 js-ffi 使用精确正式 tag。
+使用者影响：当前 0.31 线配对升级到已发布的 Calcit / `@calcit/procs`
+`0.31.0-alpha.4`（仍为预发布），使用 Node.js 24、Yarn 4.18.0。消费方需
+协调依赖图并重新生成 JS，不能与旧 CLI/runtime 混装。
+Feather 使用已发布的 `0.5.0-alpha.2` 修复 SVG 宿主合同，其余模块 pin 不变；
+这些 0.31 模块仍含预发布 tag，不能称为整张依赖图均为正式稳定版。
 源码只保留 `calcit.cirru`，依赖使用 `deps.cirru`。
 
 ```sh
@@ -36,6 +38,10 @@ PR 前缀使用 `pr/<number>/<run-id>/<attempt>/`，按 PR 分组排队，生产
 
 现有 map 格式的本地存储保持兼容；事件使用单参数 Enum dispatch，
 Reel 使用 typed State，查询结果显式处理 Option，DOM 与 Promise 操作使用 `js-ffi`。
+条码格式的字面量分支使用原生 `match`，默认仍为 CODE128；侧栏通过
+`distinct-values` 保留原有去重 Set 语义。删除后的指针选择在已检查的 Map 上
+调用 `.dissoc`，String 指针按原键移除，缺失或非 String 指针仍不移除任何键。
+不改变存档、派发协议、HUD、业务测试或部署路径，不添加验证脚本或安全豁免。
 0.30.1 候选迁移使用 `defref` / `add-watch!` 和 Respo 的 `render-with!`；
 原 Map 存档及空选择的 nil 保持不变。旧 Map 中的文本、时间与组件状态在使用边界
 进行实际检查，模态框回调声明真实的 Enum dispatcher 合同，不以类型断言代替验证。
