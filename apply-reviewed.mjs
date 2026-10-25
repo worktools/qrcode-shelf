@@ -47,7 +47,10 @@ if(process.argv[2]==='apply'){
  writeFileSync('acceptance/snapshot-after-blob.txt',blob());
  for(const file of ['deps.cirru','package.json'])assert.equal(readFileSync(file,'utf8'),input.manifests[file]);
  const needle='(:calcit-version |'+input.baseline+')';assert.equal(input.manifests['deps.cirru'].split(needle).length,2);
- writeFileSync('deps.cirru',input.manifests['deps.cirru'].replace(needle,'(:calcit-version |0.31.0-alpha.4)'));
+ const pairedDeps=input.manifests['deps.cirru'].replace(needle,'(:calcit-version |0.31.0-alpha.4)');
+ const oldFeather='|Respo/respo-feather.calcit |0.5.0-alpha.1';
+ assert.equal(pairedDeps.split(oldFeather).length,2);
+ writeFileSync('deps.cirru',pairedDeps.replace(oldFeather,'|Respo/respo-feather.calcit |0.5.0-alpha.2'));
  const pkg=JSON.parse(input.manifests['package.json']);assert.equal(pkg.dependencies['@calcit/procs'],input.baseline);pkg.dependencies['@calcit/procs']='0.31.0-alpha.4';
  writeFileSync('package.json',JSON.stringify(pkg,null,2)+'\n');
 }else{
