@@ -31,6 +31,8 @@ GitHub Actions 为 `dist` 中的前端资源设置 COS/CDN base URL，使用
 正式 `cos-upload-action` v1.2.0 内置 HTML 引用和公开访问校验，不增加独立验证脚本。
 PR 前缀使用 `pr/<number>/<run-id>/<attempt>/`，按 PR 分组排队，生产独立排队，上传不取消。
 原服务器 rsync 路径不变，服务代码不纳入 COS 上传。
+Dependabot 和 fork PR 保留完整检查、原测试与构建，但不使用普通 Actions secrets 上传 COS；
+人工重跑也不扩大权限。普通同仓库 PR 预览和 main 的原部署条件不变。
 
 `yarn build` 根据已有默认 JS 配置编译并构建一次；`yarn dev` 先编译再启动 Vite。
 持续编辑时在另一终端运行 `calcit calcit.cirru -w`。CI 保留 canonical、完整 strict、全部
