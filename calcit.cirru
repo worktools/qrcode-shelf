@@ -448,11 +448,6 @@
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
             when config/dev? $ load-console-formatter!
-            render-app!
-            add-watch! *reel :changes $ fn (s p) (render-app!)
-            listen-devtools! |a dispatch!
-            browser/set-before-unload! $ fn (e) (persist-storage!)
-            browser/set-interval! persist-storage! 60000
             match
               browser/storage-get $ .unwrap $ get config/site :storage-key
               (:some raw)
@@ -462,9 +457,16 @@
                       try-decode-map-as data $ :: 'Map 'Tag 'Dynamic
                       (:ok saved)
                         dispatch! $ :: :hydrate-storage saved
-                      (:err _) &unit
-                  (:err _) &unit
+                      (:err _)
+                        raise "|QRcode Shelf storage must be a Map<Tag, Dynamic>; original data retained and automatic saving not started."
+                  (:err _)
+                    raise "|Unable to parse QRcode Shelf storage; original data retained and automatic saving not started."
               (:none) &unit
+            render-app!
+            add-watch! *reel :changes $ fn (s p) (render-app!)
+            listen-devtools! |a dispatch!
+            browser/set-before-unload! $ fn (e) (persist-storage!)
+            browser/set-interval! persist-storage! 60000
             println |App-started.
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
