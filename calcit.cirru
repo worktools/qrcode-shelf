@@ -169,7 +169,7 @@
                               d! $ :: :remove-code $ .unwrap-or (get store :pointer) nil
                               let
                                   new-pointer $ match
-                                    first $ &set:to-list $ keys
+                                    first $ .to-list $ keys
                                       let
                                           codes $ schema/read-codes store
                                           pointer $ .unwrap-or (get store :pointer) nil
