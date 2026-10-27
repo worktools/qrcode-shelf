@@ -12,15 +12,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@calcit/procs@npm:0.31.0-alpha.7":
-  version: 0.31.0-alpha.7
-  resolution: "@calcit/procs@npm:0.31.0-alpha.7"
+"@calcit/procs@npm:0.31.0":
+  version: 0.31.0
+  resolution: "@calcit/procs@npm:0.31.0"
   dependencies:
     "@calcit/finger-vec": "npm:0.1.1"
     "@calcit/ternary-tree": "npm:0.0.26"
     "@cirru/parser.ts": "npm:0.0.10"
     "@cirru/writer.ts": "npm:^0.1.9"
-  checksum: 10c0/50dd8598ecf26a61bde3888a8bb6533562ca47a3648552fc5887a0164e4a76163f9fa4078674a453af8b559ffd9536895e22eebf37696232f1d69a35900e707b
+  checksum: 10c0/daa73d722acd302be00f5f83eb91f742025a5323fac01b84222bed0fffef688761c1285637f9d672b74c2b1bb4513b170d4b5dfcc51bd65f1396390bd526ac77
   languageName: node
   linkType: hard
 
@@ -591,11 +591,11 @@ __metadata:
   linkType: hard
 
 "min-document@npm:^2.19.0":
-  version: 2.19.0
-  resolution: "min-document@npm:2.19.0"
+  version: 2.19.2
+  resolution: "min-document@npm:2.19.2"
   dependencies:
     dom-walk: "npm:^0.1.0"
-  checksum: 10c0/783724da716fc73a51c171865d7b29bf2b855518573f82ef61c40d214f6898d7b91b5c5419e4d22693cdb78d4615873ebc3b37d7639d3dd00ca283e5a07c7af9
+  checksum: 10c0/f6cd59ae07758583bda19cf86ffa8e072cc6e1d72d4e2a62fbf72af3ca630f66ac6a0b3e0ca2b83d5939886da2d006c309fbd0e94f17931ad117860c3fb51bf7
   languageName: node
   linkType: hard
 
@@ -760,7 +760,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "qrcode-shelf@workspace:."
   dependencies:
-    "@calcit/procs": "npm:0.31.0-alpha.7"
+    "@calcit/procs": "npm:0.31.0"
     bottom-tip: "npm:^0.1.5"
     feather-icons: "npm:^4.29.0"
     jsbarcode: "npm:3.12.3"
