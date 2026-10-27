@@ -11,7 +11,7 @@ TODO
 ### Workflow
 
 使用者影响：当前 0.31 线配对升级到已发布的 Calcit / `@calcit/procs`
-`0.31.0-alpha.4`（仍为预发布），使用 Node.js 24、Yarn 4.18.0。消费方需
+`0.31.0-alpha.7`（仍为预发布），使用 Node.js 24、Yarn 4.18.0。消费方需
 协调依赖图并重新生成 JS，不能与旧 CLI/runtime 混装。
 Feather 使用已发布的 `0.5.0-alpha.2` 修复 SVG 宿主合同，其余模块 pin 不变；
 这些 0.31 模块仍含预发布 tag，不能称为整张依赖图均为正式稳定版。
