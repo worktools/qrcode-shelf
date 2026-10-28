@@ -23,12 +23,9 @@
                     :backdrop-style $ {}
                     :items barcodes-list
                     :on-result $ fn (result d!)
-                      hint-fn $ {}
-                        :args $ [] 'Dynamic $ :: 'Fn
-                          {}
-                            :args $ [] 'Enum
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Dynamic
+                        Fn Enum $ -> Unit
+                        -> Unit
                       d! $ :: :code-format $ {}
                         :id $ .unwrap $ get code-data :id
                         :format result
@@ -41,9 +38,7 @@
                     img $ {}
                   .render code-menu-plugin
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'String $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) String (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-render-code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-render-code (code format) (action el)
             when
@@ -62,9 +57,7 @@
                     fn (error) (js/console.error error) (browser/element-set-attribute! image |src |) (browser/element-set-attribute! image |alt |Failed-to-render)
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Effect)
-            :args $ [] 'String 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn String Dynamic (-> respo.schema/Effect) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.barcode
           :require
@@ -110,12 +103,9 @@
                             :color $ hsl 200 80 80
                             :cursor :pointer
                           fn (e d!)
-                            hint-fn $ {}
-                              :args $ [] 'Dynamic $ :: 'Fn
-                                {}
-                                  :args $ [] 'Enum
-                                  :return 'Unit
-                              :return 'Unit
+                            hint-fn $ Fn Dynamic
+                              Fn Enum $ -> Unit
+                              -> Unit
                             d! $ :: :touch-code $ .unwrap-or (get store :pointer) nil
                             scroll-first!
                             , &unit
@@ -140,12 +130,9 @@
                                 :font-size 20
                                 :cursor :pointer
                               fn (e d!)
-                                hint-fn $ {}
-                                  :args $ [] 'Dynamic $ :: 'Fn
-                                    {}
-                                      :args $ [] 'Enum
-                                      :return 'Unit
-                                  :return 'Unit
+                                hint-fn $ Fn Dynamic
+                                  Fn Enum $ -> Unit
+                                  -> Unit
                                 d! $ :: :toggle-barcode $ .unwrap (get code-data :id)
                                 , &unit
                           if
@@ -159,12 +146,9 @@
                         span $ {}
                         span
                           {} $ :on-click $ fn (e d!)
-                            hint-fn $ {}
-                              :args $ [] 'Dynamic $ :: 'Fn
-                                {}
-                                  :args $ [] 'Enum
-                                  :return 'Unit
-                              :return 'Unit
+                            hint-fn $ Fn Dynamic
+                              Fn Enum $ -> Unit
+                              -> Unit
                             .show remove-plugin d! $ fn ()
                               d! $ :: :remove-code $ .unwrap-or (get store :pointer) nil
                               let
@@ -192,12 +176,9 @@
                       {}
                         :style $ {} $ :cursor :pointer
                         :on-click $ fn (e d!)
-                          hint-fn $ {}
-                            :args $ [] 'Dynamic $ :: 'Fn
-                              {}
-                                :args $ [] 'Enum
-                                :return 'Unit
-                            :return 'Unit
+                          hint-fn $ Fn Dynamic
+                            Fn Enum $ -> Unit
+                            -> Unit
                           .show create-plugin d! $ fn (raw)
                             let
                                 result $ decode-map-as raw 'String
@@ -211,9 +192,10 @@
                   when dev? $ comp-typed-reel (>> states :reel) reel $ {}
                   when dev? $ comp-inspect |store store $ {} (:bottom 0)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] $ :: 'reel.typed/State 'Enum (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn
+            reel.typed/State Enum $ Map Dynamic Dynamic
+            -> respo.schema/Component
+            :features :js-ffi
         'comp-note $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-note (states code)
             let
@@ -238,12 +220,9 @@
                   {}
                     :style $ {} $ :cursor :pointer
                     :on-click $ fn (e d!)
-                      hint-fn $ {}
-                        :args $ [] 'Dynamic $ :: 'Fn
-                          {}
-                            :args $ [] 'Enum
-                            :return 'Unit
-                        :return 'Unit
+                      hint-fn $ Fn Dynamic
+                        Fn Enum $ -> Unit
+                        -> Unit
                       .show note-plugin d! $ fn (raw)
                         let
                             result $ decode-map-as raw 'String
@@ -257,9 +236,7 @@
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-sidebar (states store)
             div
@@ -293,12 +270,9 @@
                             assoc style-card :background-color :white
                             , style-card
                           :on-click $ fn (e d!)
-                            hint-fn $ {}
-                              :args $ [] 'Dynamic $ :: 'Fn
-                                {}
-                                  :args $ [] 'Enum
-                                  :return 'Unit
-                              :return 'Unit
+                            hint-fn $ Fn Dynamic
+                              Fn Enum $ -> Unit
+                              -> Unit
                             d! $ :: :pointer $ decode-map-as
                               .unwrap $ get code :id
                               , 'String
@@ -325,15 +299,11 @@
                             .unwrap-or (get code :barcode?) false
                             comp-i |bar-chart 16 $ hsl 0 0 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-layout $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-layout () (action el) &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Effect)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> respo.schema/Effect) (:features :js-ffi)
         'scroll-first! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn scroll-first! ()
             match (browser/query-selector |.scroll-area>:first-child)
@@ -342,9 +312,7 @@
               (:none) &unit
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'style-card $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-card
             {} (:padding "|12px 12px") (:font-size 18) (:font-family ui/font-code) (:cursor :pointer)
@@ -380,9 +348,7 @@
               div ({})
                 img $ {}
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'String
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn String (-> respo.schema/Component) (:features :js-ffi)
         'effect-render-code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-render-code (code) (action el)
             when
@@ -399,9 +365,7 @@
                       fn (error) (js/console.error error) (browser/element-set-attribute! image |alt |Failed-to-render)
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.schema/Effect)
-            :args $ [] 'String
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn String (-> respo.schema/Effect) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.qrcode
           :require
@@ -432,7 +396,8 @@
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
-          :schema $ :: 'Ref $ :: 'reel.typed/State 'Enum (:: 'Map 'Dynamic 'Dynamic)
+          :schema $ quote $ Ref
+            reel.typed/State Enum $ Map Dynamic Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             if (enum? op)
@@ -442,9 +407,7 @@
                 , &unit
               raise "|Expected an Enum operation"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Enum (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
             when config/dev? $ load-console-formatter!
@@ -469,48 +432,37 @@
             browser/set-interval! persist-storage! 60000
             println |App-started.
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
             .unwrap $ respo-browser/query-selector |.app
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
               .unwrap $ get config/site :storage-key
               format-cirru-edn $ :store @*reel
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (clear-cache!)
             reset! *reel $ typed/refresh updater @*reel schema/store
             println |Code-updated.
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! (mount-target)
               fn () $ comp-container @*reel
               , dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'snippets $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn snippets () (println config/site)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -529,7 +481,9 @@
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Includes the :reel/* controls that comp-reel sends."
           :code $ quote $ defenum Op
-            :states (:: 'List 'Dynamic) 'Dynamic
+            :states
+              quote $ List Dynamic
+              , 'Dynamic
             :content 'Dynamic
             :hydrate-storage 'Dynamic
             :add-code 'Dynamic
@@ -547,7 +501,7 @@
             :reel/reset
             :reel/remove 'Number
           :examples $ []
-          :schema $ :: 'EnumDef
+          :schema $ quote EnumDef
         'code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def code
             {} (:id nil) (:code nil) (:note nil) (:timestamp nil) (:barcode? false) (:barcode-format nil)
@@ -558,9 +512,8 @@
               .unwrap $ get store :codes
               :: 'Map 'String $ :: 'Map 'Tag 'Dynamic
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :return $ :: 'Map 'String $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn (Map Dynamic Dynamic)
+            -> $ Map String $ Map Tag Dynamic
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {}
@@ -614,10 +567,9 @@
                 _ $ do (println |Unknown-op: op) store
               :: 'Map 'Dynamic 'Dynamic
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'Enum 'String 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'Map 'Dynamic 'Dynamic
+          :schema $ quote $ Fn (Map Dynamic Dynamic) Enum String Number
+            -> $ Map Dynamic Dynamic
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require
