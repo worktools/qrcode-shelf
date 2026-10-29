@@ -10,7 +10,7 @@ TODO
 
 ### Workflow
 
-使用者影响：无效存档现在会明确报错并停止启动，保存回调不注册，原文不会被空状态覆盖；正常 Map 存档合同保持。候选将 CLI / `@calcit/procs` 从 alpha.7 成对升级到正式 **0.31.0**，使用真实已发布的 Respo **0.17.0-alpha.4**、UI **0.9.0-alpha.4**、Reel **0.7.0-alpha.4**、Feather **0.5.0-alpha.5**、Alerts **0.11.0-alpha.3**、JS-FFI **0.2.7**。开发者需整图更新、重新生成 JS 并重启服务；部分模块沿用既有 alpha 发布线，不称为整个图均稳定。
+使用者影响：候选将 CLI / `@calcit/procs` 升级到正式 **0.32.1**，使用 Respo **0.17.1**、UI **0.9.0**、Reel **0.7.0-alpha.5**、Feather **0.5.0-alpha.6**、Alerts **0.11.0-alpha.4**、JS-FFI **0.2.9**；Snapshot 已用 `calcit edit format` 迁移为 0.32 类型写法。无效存档会明确报错并停止启动、保存回调不注册、原文不会被空状态覆盖的合同保持不变。开发者需整图更新、重新生成 JS 并重启服务；部分模块沿用既有 alpha 发布线，不称为整个图均稳定。
 
 同时复用已有 Dependabot **#29** 的完整 min-document **2.19.2** 锁条目，不额外修改其版本或 checksum。Node 24、Yarn 4.18.0、JSBarcode 与 QRCode 包版本保持，App 仍为 0.1.0。只维护 calcit.cirru/deps.cirru，生成 js-out 不入库。
 
