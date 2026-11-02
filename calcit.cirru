@@ -79,7 +79,7 @@
                 store $ :store reel
                 states $ decode-map-as
                   .unwrap $ get store :states
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 remove-plugin $ use-confirm (>> states :remove)
                   {} $ :text "|Are use sure to remove?"
                 create-plugin $ use-prompt (>> states :create)
@@ -114,7 +114,7 @@
                             .unwrap-or
                               get-in store $ [] :codes $ .unwrap-or (get store :pointer) nil
                               , nil
-                            :: 'Map 'Tag 'Dynamic
+                            quote $ Map Tag Dynamic
                           code $ decode-map-as
                             .unwrap $ get code-data :code
                             , 'String
@@ -189,8 +189,12 @@
                       comp-i |plus-square 28 $ hsl 200 80 80
                   .render remove-plugin
                   .render create-plugin
-                  when dev? $ comp-typed-reel (>> states :reel) reel $ {}
-                  when dev? $ comp-inspect |store store $ {} (:bottom 0)
+                  if dev?
+                    Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                    Option :none
+                  if dev?
+                    Option :some $ comp-inspect |store store $ {} (:bottom 0)
+                    Option :none
           :examples $ []
           :schema $ quote $ Fn
             reel.typed/State Enum $ Map Dynamic Dynamic
@@ -297,7 +301,8 @@
                         div ({})
                           if
                             .unwrap-or (get code :barcode?) false
-                            comp-i |bar-chart 16 $ hsl 0 0 0
+                            Option :some $ comp-i |bar-chart 16 $ hsl 0 0 0
+                            Option :none
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-layout $ %{} 'CodeEntry (:doc |)
@@ -417,7 +422,7 @@
                 match (try-parse-cirru-edn raw)
                   (:ok data)
                     match
-                      try-decode-map-as data $ :: 'Map 'Tag 'Dynamic
+                      try-decode-map-as data $ quote $ Map Tag Dynamic
                       (:ok saved)
                         dispatch! $ :: :hydrate-storage saved
                       (:err _)
@@ -483,23 +488,23 @@
           :code $ quote $ defenum Op
             :states
               quote $ List Dynamic
-              , 'Dynamic
-            :content 'Dynamic
-            :hydrate-storage 'Dynamic
-            :add-code 'Dynamic
-            :touch-code 'Dynamic
-            :pointer 'Dynamic
-            :remove-code 'Dynamic
-            :note-code 'Dynamic
-            :code-format 'Dynamic
-            :toggle-barcode 'Dynamic
+              , Dynamic
+            :content Dynamic
+            :hydrate-storage Dynamic
+            :add-code Dynamic
+            :touch-code Dynamic
+            :pointer Dynamic
+            :remove-code Dynamic
+            :note-code Dynamic
+            :code-format Dynamic
+            :toggle-barcode Dynamic
             :reel/toggle
-            :reel/recall 'Number
+            :reel/recall Number
             :reel/run
             :reel/step
             :reel/merge
             :reel/reset
-            :reel/remove 'Number
+            :reel/remove Number
           :examples $ []
           :schema $ quote EnumDef
         'code $ %{} 'CodeEntry (:doc |)
@@ -510,7 +515,7 @@
           :code $ quote $ defn read-codes (store)
             decode-map-as
               .unwrap $ get store :codes
-              :: 'Map 'String $ :: 'Map 'Tag 'Dynamic
+              quote $ Map String $ Map Tag Dynamic
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic)
             -> $ Map String $ Map Tag Dynamic
@@ -531,7 +536,7 @@
               match op
                 (:states cursor state)
                   update-states store
-                    decode-map-as cursor $ :: 'List 'Dynamic
+                    decode-map-as cursor $ quote $ List Dynamic
                     , state
                 (:content value) (assoc store :content value)
                 (:hydrate-storage value) value
@@ -565,7 +570,7 @@
                       get-in store $ [] :codes id :barcode?
                       , false
                 _ $ do (println |Unknown-op: op) store
-              :: 'Map 'Dynamic 'Dynamic
+              quote $ Map Dynamic Dynamic
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) Enum String Number
             -> $ Map Dynamic Dynamic
