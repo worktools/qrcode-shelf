@@ -328,6 +328,7 @@
               :height 120
               :display :inline-block
           :examples $ []
+          :schema $ quote $ Map Tag respo-ui.schema/StyleValue
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
