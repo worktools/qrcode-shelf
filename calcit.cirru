@@ -103,7 +103,7 @@
                             :color $ hsl 200 80 80
                             :cursor :pointer
                           fn (e d!)
-                            hint-fn $ Fn Dynamic
+                            hint-fn $ Fn respo.schema/RespoEvent
                               Fn Enum $ -> Unit
                               -> Unit
                             d! $ :: :touch-code $ .unwrap-or (get store :pointer) nil
@@ -123,14 +123,14 @@
                           div
                             {} $ :style ui/row-middle
                             <> code $ {} (:font-size 20) (:font-family ui/font-code)
-                            =< 8 nil
+                            space-x 8
                             comp-icon |toggle-right
                               {} (:size 20)
                                 :color $ hsl 0 0 80
                                 :font-size 20
                                 :cursor :pointer
                               fn (e d!)
-                                hint-fn $ Fn Dynamic
+                                hint-fn $ Fn respo.schema/RespoEvent
                                   Fn Enum $ -> Unit
                                   -> Unit
                                 d! $ :: :toggle-barcode $ .unwrap (get code-data :id)
@@ -146,7 +146,7 @@
                         span $ {}
                         span
                           {} $ :on-click $ fn (e d!)
-                            hint-fn $ Fn Dynamic
+                            hint-fn $ Fn respo.schema/RespoEvent
                               Fn Enum $ -> Unit
                               -> Unit
                             .show remove-plugin d! $ fn ()
@@ -176,7 +176,7 @@
                       {}
                         :style $ {} $ :cursor :pointer
                         :on-click $ fn (e d!)
-                          hint-fn $ Fn Dynamic
+                          hint-fn $ Fn respo.schema/RespoEvent
                             Fn Enum $ -> Unit
                             -> Unit
                           .show create-plugin d! $ fn (raw)
@@ -219,12 +219,12 @@
                       , |...
                     , 'String
                   {} $ :color $ hsl 0 0 70
-                =< 8 nil
+                space-x 8
                 span
                   {}
                     :style $ {} $ :cursor :pointer
                     :on-click $ fn (e d!)
-                      hint-fn $ Fn Dynamic
+                      hint-fn $ Fn respo.schema/RespoEvent
                         Fn Enum $ -> Unit
                         -> Unit
                       .show note-plugin d! $ fn (raw)
@@ -274,7 +274,7 @@
                             assoc style-card :background-color :white
                             , style-card
                           :on-click $ fn (e d!)
-                            hint-fn $ Fn Dynamic
+                            hint-fn $ Fn respo.schema/RespoEvent
                               Fn Enum $ -> Unit
                               -> Unit
                             d! $ :: :pointer $ decode-map-as
@@ -335,7 +335,7 @@
             respo-ui.core :refer $ hsl
             respo-ui.core :as ui
             respo.core :refer $ defcomp defeffect >> list-> <> div button textarea span input
-            respo.comp.space :refer $ =<
+            respo.comp.space :refer $ space-x
             respo.comp.inspect :refer $ comp-inspect
             reel.comp.reel :refer $ comp-typed-reel
             app.config :refer $ dev?
@@ -409,7 +409,10 @@
             if (enum? op)
               do
                 when config/dev? $ println |Dispatch: op
-                reset! *reel $ typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
+                reset! *reel $ match (typed/decode-control op)
+                  (:some control) (typed/apply-control updater @*reel control)
+                  (:none)
+                    typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
                 , &unit
               raise "|Expected an Enum operation"
           :examples $ []
