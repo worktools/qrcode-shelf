@@ -14,6 +14,7 @@ import { updater } from '../js-out/app.updater.mjs';
 import { comp_container } from '../js-out/app.comp.container.mjs';
 import { new_reel } from '../js-out/reel.typed.mjs';
 import { make_string } from '../js-out/respo.render.html.mjs';
+import { with_memo_frame } from '../js-out/respo.memo.mjs';
 
 const tags = clt.init_tags(['add-code', 'touch-code', 'toggle-barcode', 'note-code', 'code-format', 'remove-code', 'id', 'note', 'format', 'gs1-128', 'codes', 'code', 'pointer', 'time', 'barcode?', 'barcode-format']);
 const op = (name, payload) => clt._$o__$o_(tags[name], payload);
@@ -58,13 +59,24 @@ test('existing map-shaped saved data survives a Cirru EDN round trip', () => {
   assert.equal(get(clt.option_$o_unwrap(clt.get(read_codes(restored), 'code-a')), 'code'), 'legacy-code');
 });
 
-test('typed Reel rendering supports both empty and selected shelves', () => {
-  assert.match(make_string(comp_container(new_reel(store))), /No selection/);
+test('typed Reel rendering supports both empty and selected shelves', async () => {
+  assert.match(with_memo_frame(() => make_string(comp_container(new_reel(store)))), /No selection/);
   const next = apply(store, 'add-code', '1234567890');
-  const html = make_string(comp_container(new_reel(next)));
+  const html = with_memo_frame(() => make_string(comp_container(new_reel(next))));
   assert.match(html, /1234567890/);
   assert.match(html, /<img\b/);
   assert.doesNotMatch(html, /No icon:/);
+  // Actual application dispatch must interpret controls without recording a business op.
+  const main = await import('../js-out/app.main.mjs');
+  const field = (value, name) => clt.option_$o_unwrap(clt.get(value, clt.to_tag(name)));
+  const before = clt.deref(main._$s_reel);
+  const toggle = clt._$o__$o_(clt.to_tag('reel/toggle'));
+  main.dispatch_$x_(toggle);
+  const after = clt.deref(main._$s_reel);
+  assert.equal(field(after, 'display?'), !field(before, 'display?'));
+  assert.equal(clt.count(field(after, 'records')), clt.count(field(before, 'records')));
+  assert.ok(clt._$e_(field(after, 'store'), field(before, 'store')));
+  main.dispatch_$x_(toggle);
 });
 
 test('clearing a note keeps the saved :note nil shape', () => {

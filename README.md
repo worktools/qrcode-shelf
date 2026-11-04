@@ -10,7 +10,25 @@ TODO
 
 ### Workflow
 
-开发者请同步安装正式 Calcit CLI 和 `@calcit/procs` **0.34.1**，按锁文件安装依赖并重新生成 JS。本版本采用 Respo 0.18.0、UI 0.12.0、Reel 0.8.0、Feather 0.5.1、Alerts 0.11.2、JS-FFI 0.2.9。侧栏在条码记录上显示条码图标，开发模式显示 Inspector 与 Reel。这三个可选子组件现在用显式 Option 表达。
+开发者请同步安装正式 Calcit CLI 和 `@calcit/procs` **0.34.2**，严格安装完整依赖图、重新生成 JS 并刷新。
+正式模块为 Respo 0.19.2、UI 0.14.1、Reel 0.9.0、Feather 0.6.0、Alerts 0.12.0、JS-FFI 0.2.10，传递 Router 0.11.2。
+原二维码/条码绘制、默认 CODE128、Map 存档、空选择/note 的 nil、侧栏条码图标及开发模式的 Inspector/Reel 条件保留。
+
+本轮修复开发工具接线：[控制命令被记作业务操作 #36](https://github.com/worktools/qrcode-shelf/issues/36)。
+派发入口先使用已发布的 typed/decode-control / typed/apply-control，业务 Enum 仍走原 updater/record-op。
+旧路径实测 `:reel/toggle` 不改变 display? 却增加历史；新路径正确开关面板，且不增加业务历史或改变 Store。
+已有控制命令现在按 Reel 协议执行，其非法参数由原库 decoder 拒绝；业务/存档协议不收窄，不增加编译器特例。
+
+DOM 回调改用真实 RespoEvent，两个旧方向间距改为 space-x。模态菜单的异构结果和旧条码格式的 fallback 边界仍为 Dynamic。
+原 26 个定义全部保留，只有三个组件和 dispatch! 的代码变化；所有原 schema/附带 metadata 不变。
+unsafe 仍为 0、codeNil 22→20，schemaDynamic 仍为 29；统计仅用于定位，不新增或放宽门禁/预算。
+
+本地完整 strict diagnostics=[]、全部 276 个定义、七个应用 namespace 的 26 个定义、原七项 Node、严格 Caps/toolchain、
+immutable、canonical 和 Vite 构建通过。原测试输入及断言保留，只适配 managed memo frame，并在原 Reel 测试组内补真实应用
+控制命令“不改变 Store/不增加记录”的回归；不增加 runner 或测试矩阵。没有附带 native 测试，不把空集算作通过。
+独立 Chrome/全新回环来源实测合成二维码/条码图片解码、备注、侧栏图标条件、两条记录切换、Reel 快捷键开关及刷新恢复，
+页面异常、console warn/error、资源失败均为空。不读取真实数据，不操作复制或删除；本轮未重新注入坏存档/编译错误或复验 HMR。
+恢复顺序、异常 HUD 启动入口、reloader、SDK 和绘制实现均未改。仅创建原隔离 PR COS 预览，不合并/生产部署或发版。
 
 同时复用已有 Dependabot **#29** 的完整 min-document **2.19.2** 锁条目，不额外修改其版本或 checksum。Node 24、Yarn 4.18.0、JSBarcode 与 QRCode 包版本保持，App 仍为 0.1.0。只维护 calcit.cirru/deps.cirru，生成 js-out 不入库。
 
@@ -33,7 +51,7 @@ Dependabot 和 fork PR 保留完整检查、原测试与构建，但不使用普
 
 `yarn build` 根据已有默认 JS 配置编译并构建一次；`yarn dev` 先编译再启动 Vite。
 持续编辑时在另一终端运行 `calcit calcit.cirru -w`。CI 保留 canonical、完整 strict、全部
-公开定义、toolchain 和原六项业务测试，不新增独立迁移或诊断脚本。
+公开定义、toolchain 和原七项业务测试，不新增独立迁移或诊断脚本。
 
 现有 map 格式的本地存储保持兼容；事件使用单参数 Enum dispatch，
 Reel 使用 typed State，查询结果显式处理 Option，DOM 与 Promise 操作使用 `js-ffi`。
@@ -45,7 +63,7 @@ Reel 使用 typed State，查询结果显式处理 Option，DOM 与 Promise 操�
 原 Map 存档及空选择的 nil 保持不变。旧 Map 中的文本、时间与组件状态在使用边界
 进行实际检查，模态框回调声明真实的 Enum dispatcher 合同，不以类型断言代替验证。
 
-本轮正式发布图通过完整 strict、全部/公共定义、不可变安装、原 7 项 Node 回归及构建。实际隔离页面通过合成二维码/条码切换、备注与正常刷新恢复；合成解析坏存档和非 Map 存档均经过启动、刷新及离页检查，跨过原 60 秒保存周期后原文保留，错误 HUD 在页面可见。未操作真实数据、复制或删除；这些夹具不进入仓库或 dist。
+历史 0.34.1 验收：当时已完成合成解析坏存档与非 Map 存档的启动、刷新、离页及原 60 秒周期保护，错误 HUD 可见；这些是历史证据，不计为本轮重新执行。夹具不进入仓库或 dist。
 
 ### License
 
