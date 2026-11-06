@@ -4,5 +4,5 @@
     |Respo/respo-ui.calcit |0.15.1
     |Respo/respo.calcit |0.19.4
     |Respo/respo-feather.calcit |0.6.2
-    |Respo/alerts.calcit |0.13.1
+    |Respo/alerts.calcit |0.14.0
     |calcit-lang/js-ffi |0.2.13
