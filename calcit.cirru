@@ -79,7 +79,7 @@
                 store $ :store reel
                 states $ decode-map-as
                   .unwrap $ get store :states
-                  quote $ Map Tag Dynamic
+                  Map Tag Dynamic
                 remove-plugin $ use-confirm (>> states :remove)
                   {} $ :text "|Are use sure to remove?"
                 create-plugin $ use-prompt (>> states :create)
@@ -114,7 +114,7 @@
                             .unwrap-or
                               get-in store $ [] :codes $ .unwrap-or (get store :pointer) nil
                               , nil
-                            quote $ Map Tag Dynamic
+                            Map Tag Dynamic
                           code $ decode-map-as
                             .unwrap $ get code-data :code
                             , 'String
@@ -179,12 +179,11 @@
                           hint-fn $ Fn respo.schema/RespoEvent
                             Fn Enum $ -> Unit
                             -> Unit
-                          .show create-plugin d! $ fn (raw)
-                            let
-                                result $ decode-map-as raw 'String
-                              when-not (blank? result)
-                                d! $ :: :add-code result
-                              , &unit
+                          .show create-plugin d! $ fn (result)
+                            hint-fn $ Fn String $ -> Unit
+                            when-not (blank? result)
+                              d! $ :: :add-code result
+                            , &unit
                           , &unit
                       comp-i |plus-square 28 $ hsl 200 80 80
                   .render remove-plugin
@@ -227,9 +226,9 @@
                       hint-fn $ Fn respo.schema/RespoEvent
                         Fn Enum $ -> Unit
                         -> Unit
-                      .show note-plugin d! $ fn (raw)
+                      .show note-plugin d! $ fn (result)
+                        hint-fn $ Fn String $ -> Unit
                         let
-                            result $ decode-map-as raw 'String
                             id $ decode-map-as
                               .unwrap $ get code :id
                               , 'String
@@ -426,7 +425,7 @@
                 match (try-parse-cirru-edn raw)
                   (:ok data)
                     match
-                      try-decode-map-as data $ quote $ Map Tag Dynamic
+                      try-decode-map-as data $ Map Tag Dynamic
                       (:ok saved)
                         dispatch! $ :: :hydrate-storage saved
                       (:err _)
@@ -490,9 +489,7 @@
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Includes the :reel/* controls that comp-reel sends."
           :code $ quote $ defenum Op
-            :states
-              quote $ List Dynamic
-              , Dynamic
+            :states (List Dynamic) Dynamic
             :content Dynamic
             :hydrate-storage Dynamic
             :add-code Dynamic
@@ -519,7 +516,7 @@
           :code $ quote $ defn read-codes (store)
             decode-map-as
               .unwrap $ get store :codes
-              quote $ Map String $ Map Tag Dynamic
+              Map String $ Map Tag Dynamic
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic)
             -> $ Map String $ Map Tag Dynamic
@@ -540,7 +537,7 @@
               match op
                 (:states cursor state)
                   update-states store
-                    decode-map-as cursor $ quote $ List Dynamic
+                    decode-map-as cursor $ List Dynamic
                     , state
                 (:content value) (assoc store :content value)
                 (:hydrate-storage value) value
@@ -574,7 +571,7 @@
                       get-in store $ [] :codes id :barcode?
                       , false
                 _ $ do (println |Unknown-op: op) store
-              quote $ Map Dynamic Dynamic
+              Map Dynamic Dynamic
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) Enum String Number
             -> $ Map Dynamic Dynamic
