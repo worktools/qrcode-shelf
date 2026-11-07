@@ -565,9 +565,11 @@
                           , :note
                         , note
                     (:none)
-                      dissoc-in store $ [] :codes
-                        .unwrap $ get data :id
-                        , :note
+                      assoc-in store
+                        [] :codes
+                          .unwrap $ get data :id
+                          , :note
+                        , nil
                 (:code-format data)
                   assoc-in store
                     [] :codes
