@@ -151,17 +151,21 @@
                             hint-fn $ Fn respo.schema/RespoEvent
                               Fn app.schema/Op $ -> Unit
                               -> Unit
-                            .show remove-plugin d! $ fn ()
-                              d! $ :: :remove-code $ .unwrap-or (get store :pointer) |
-                              match
-                                first $ .to-list $ keys
-                                  let
-                                      codes $ schema/read-codes store
-                                      pointer $ .unwrap-or (get store :pointer) |
-                                    if (string? pointer) (.dissoc codes pointer) codes
-                                (:some id)
-                                  d! $ :: :pointer id
-                                (:none) &unit
+                            .show remove-plugin
+                              fn (op)
+                                hint-fn $ Fn AnyEnum $ -> Unit
+                                d! $ decode-map-as op app.schema/Op
+                              fn ()
+                                d! $ :: :remove-code $ .unwrap-or (get store :pointer) |
+                                match
+                                  first $ .to-list $ keys
+                                    let
+                                        codes $ schema/read-codes store
+                                        pointer $ .unwrap-or (get store :pointer) |
+                                      if (string? pointer) (.dissoc codes pointer) codes
+                                  (:some id)
+                                    d! $ :: :pointer id
+                                  (:none) &unit
                             , &unit
                           comp-i |x-circle 20 $ hsl 0 80 70
                     div
