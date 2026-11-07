@@ -6,7 +6,7 @@
     {} (:description |) (:init-fn 'app.main/main!) (:mode :js) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |reel.calcit/ |alerts.calcit/ |js-ffi/ |respo-feather.calcit/
-      :type-slots $ {} $ :dispatch-op |app.schema/Op
+      :type-slots $ {} $ :dispatch-op 'app.schema/Op
   :files $ {}
     'app.comp.barcode $ %{} 'FileEntry
       :defs $ {}
@@ -24,14 +24,14 @@
                     :items barcodes-list
                     :on-result $ fn (result d!)
                       hint-fn $ Fn Dynamic
-                        Fn Enum $ -> Unit
+                        Fn app.schema/Op $ -> Unit
                         -> Unit
                       d! $ :: :code-format $ {}
                         :id $ .unwrap $ get code-data :id
                         :format result
                       , &unit
               []
-                effect-render-code code $ .unwrap-or (get code-data :barcode-format) nil
+                effect-render-code code $ .unwrap-or (get code-data :barcode-format) :code-128
                 div
                   {} $ :style ui/center
                   div ({})
@@ -91,7 +91,9 @@
                 div
                   {} $ :style $ merge ui/global ui/fullscreen ui/column
                   if
-                    non-nil? $ .unwrap-or (get store :pointer) nil
+                    match (get store :pointer)
+                      (:some pointer) (non-nil? pointer)
+                      (:none) false
                     div
                       {} $ :style $ merge ui/expand ui/column
                       div
@@ -104,15 +106,15 @@
                             :cursor :pointer
                           fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn Enum $ -> Unit
+                              Fn app.schema/Op $ -> Unit
                               -> Unit
-                            d! $ :: :touch-code $ .unwrap-or (get store :pointer) nil
+                            d! $ :: :touch-code $ .unwrap-or (get store :pointer) |
                             scroll-first!
                             , &unit
                       let
                           code-data $ decode-map-as
                             .unwrap-or
-                              get-in store $ [] :codes $ .unwrap-or (get store :pointer) nil
+                              get-in store $ [] :codes $ .unwrap-or (get store :pointer) |
                               , nil
                             Map Tag Dynamic
                           code $ decode-map-as
@@ -131,7 +133,7 @@
                                 :cursor :pointer
                               fn (e d!)
                                 hint-fn $ Fn respo.schema/RespoEvent
-                                  Fn Enum $ -> Unit
+                                  Fn app.schema/Op $ -> Unit
                                   -> Unit
                                 d! $ :: :toggle-barcode $ .unwrap (get code-data :id)
                                 , &unit
@@ -147,20 +149,19 @@
                         span
                           {} $ :on-click $ fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn Enum $ -> Unit
+                              Fn app.schema/Op $ -> Unit
                               -> Unit
                             .show remove-plugin d! $ fn ()
-                              d! $ :: :remove-code $ .unwrap-or (get store :pointer) nil
-                              let
-                                  new-pointer $ match
-                                    first $ .to-list $ keys
-                                      let
-                                          codes $ schema/read-codes store
-                                          pointer $ .unwrap-or (get store :pointer) nil
-                                        if (string? pointer) (.dissoc codes pointer) codes
-                                    (:some id) id
-                                    (:none) nil
-                                d! $ :: :pointer new-pointer
+                              d! $ :: :remove-code $ .unwrap-or (get store :pointer) |
+                              match
+                                first $ .to-list $ keys
+                                  let
+                                      codes $ schema/read-codes store
+                                      pointer $ .unwrap-or (get store :pointer) |
+                                    if (string? pointer) (.dissoc codes pointer) codes
+                                (:some id)
+                                  d! $ :: :pointer id
+                                (:none) &unit
                             , &unit
                           comp-i |x-circle 20 $ hsl 0 80 70
                     div
@@ -177,7 +178,7 @@
                         :style $ {} $ :cursor :pointer
                         :on-click $ fn (e d!)
                           hint-fn $ Fn respo.schema/RespoEvent
-                            Fn Enum $ -> Unit
+                            Fn app.schema/Op $ -> Unit
                             -> Unit
                           .show create-plugin d! $ fn (result)
                             hint-fn $ Fn String $ -> Unit
@@ -196,7 +197,7 @@
                     Option :none
           :examples $ []
           :schema $ quote $ Fn
-            reel.typed/State Enum $ Map Dynamic Dynamic
+            reel.typed/State app.schema/Op $ Map Dynamic Dynamic
             -> respo.schema/Component
             :features :js-ffi
         'comp-note $ %{} 'CodeEntry (:doc |)
@@ -205,17 +206,17 @@
                 note-plugin $ use-prompt (>> states :create)
                   {} (:text "|Some note:") (:button-text |Add)
                     :initial $ decode-map-as
-                      or
-                        .unwrap-or (get code :note) nil
-                        , |
+                      match (get code :note)
+                        (:some note) (or note |)
+                        (:none) |
                       , 'String
               div
                 {} $ :style ui/row-middle
                 <>
                   decode-map-as
-                    or
-                      .unwrap-or (get code :note) nil
-                      , |...
+                    match (get code :note)
+                      (:some note) (or note |...)
+                      (:none) |...
                     , 'String
                   {} $ :color $ hsl 0 0 70
                 space-x 8
@@ -224,7 +225,7 @@
                     :style $ {} $ :cursor :pointer
                     :on-click $ fn (e d!)
                       hint-fn $ Fn respo.schema/RespoEvent
-                        Fn Enum $ -> Unit
+                        Fn app.schema/Op $ -> Unit
                         -> Unit
                       .show note-plugin d! $ fn (result)
                         hint-fn $ Fn String $ -> Unit
@@ -269,12 +270,12 @@
                               decode-map-as
                                 .unwrap $ get code :id
                                 , 'String
-                              .unwrap-or (get store :pointer) nil
+                              .unwrap-or (get store :pointer) |
                             assoc style-card :background-color :white
                             , style-card
                           :on-click $ fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn Enum $ -> Unit
+                              Fn app.schema/Op $ -> Unit
                               -> Unit
                             d! $ :: :pointer $ decode-map-as
                               .unwrap $ get code :id
@@ -289,9 +290,9 @@
                         div ({})
                           <>
                             decode-map-as
-                              or
-                                .unwrap-or (get code :note) nil
-                                , |
+                              match (get code :note)
+                                (:some note) (or note |)
+                                (:none) |
                               , 'String
                             {}
                               :color $ hsl 0 0 80
@@ -402,7 +403,7 @@
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
           :schema $ quote $ Ref
-            reel.typed/State Enum $ Map Dynamic Dynamic
+            reel.typed/State app.schema/Op $ Map Dynamic Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             if (enum? op)
@@ -415,7 +416,7 @@
                 , &unit
               raise "|Expected an Enum operation"
           :examples $ []
-          :schema $ quote $ Fn Enum (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn app.schema/Op (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
             when config/dev? $ load-console-formatter!
@@ -435,7 +436,9 @@
               (:none) &unit
             render-app!
             add-watch! *reel :changes $ fn (s p) (render-app!)
-            listen-devtools! |a dispatch!
+            listen-devtools! |a $ fn (op)
+              hint-fn $ Fn AnyEnum $ -> Unit
+              dispatch! $ decode-map-as op app.schema/Op
             browser/set-before-unload! $ fn (e) (persist-storage!)
             browser/set-interval! persist-storage! 60000
             println |App-started.
@@ -554,11 +557,17 @@
                     dissoc-in $ [] :codes id
                     assoc :pointer nil
                 (:note-code data)
-                  assoc-in store
-                    [] :codes
-                      .unwrap $ get data :id
-                      , :note
-                    .unwrap-or (get data :note) nil
+                  match (get data :note)
+                    (:some note)
+                      assoc-in store
+                        [] :codes
+                          .unwrap $ get data :id
+                          , :note
+                        , note
+                    (:none)
+                      dissoc-in store $ [] :codes
+                        .unwrap $ get data :id
+                        , :note
                 (:code-format data)
                   assoc-in store
                     [] :codes
@@ -573,7 +582,7 @@
                 _ $ do (println |Unknown-op: op) store
               Map Dynamic Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) Enum String Number
+          :schema $ quote $ Fn (Map Dynamic Dynamic) app.schema/Op String Number
             -> $ Map Dynamic Dynamic
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)

@@ -10,9 +10,10 @@ TODO
 
 ### Workflow
 
-开发者请同步安装正式 Calcit CLI 和 `@calcit/procs` **0.35.1**，严格安装完整依赖图、重新生成 JS 并刷新。
+开发者请同步安装正式 Calcit CLI 和 `@calcit/procs` **0.36.0**，严格安装完整依赖图、重新生成 JS 并刷新。
 正式模块为 Respo 0.19.4、UI 0.15.1、Reel 0.9.2、Feather 0.6.2、Alerts 0.14.0、JS-FFI 0.2.13，传递 Router 0.12.1。新增二维码和编辑备注的 Prompt 回调都接收 String。
-原二维码/条码绘制、默认 CODE128、Map 存档、空选择/note 的 nil、侧栏条码图标及开发模式的 Inspector/Reel 条件保留。
+原二维码/条码绘制、默认 CODE128、Map 存档、侧栏条码图标及开发模式的 Inspector/Reel 条件保留。
+Calcit 0.36.0 不再允许把 Option 退回 nil：未选择时选中判断不会命中任何 id，空备注会从记录里删掉 `:note`，未设置格式按 CODE128；`dispatch!`、`updater` 和 `d!` 的操作类型从裸 `Enum` 改为 `app.schema/Op`。
 
 本轮修复开发工具接线：[控制命令被记作业务操作 #36](https://github.com/worktools/qrcode-shelf/issues/36)。
 派发入口先使用已发布的 typed/decode-control / typed/apply-control，业务 Enum 仍走原 updater/record-op。
