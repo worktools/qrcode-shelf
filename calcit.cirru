@@ -156,7 +156,7 @@
                                 hint-fn $ Fn AnyEnum $ -> Unit
                                 match op
                                   (:states cursor state)
-                                    d! $ %:: app.schema/Op :states
+                                    d! $ app.schema/Op :states
                                       decode-map-as cursor $ List Dynamic
                                       , state
                                   _ $ eprintln "|unexpected confirm op" op
@@ -449,7 +449,7 @@
               hint-fn $ Fn AnyEnum $ -> Unit
               match op
                 (:reel/toggle)
-                  dispatch! $ %:: app.schema/Op :reel/toggle
+                  dispatch! $ app.schema/Op :reel/toggle
                 _ $ eprintln "|unexpected devtools op" op
             browser/set-before-unload! $ fn (e) (persist-storage!)
             browser/set-interval! persist-storage! 60000
