@@ -154,7 +154,12 @@
                             .show remove-plugin
                               fn (op)
                                 hint-fn $ Fn AnyEnum $ -> Unit
-                                d! $ decode-map-as op app.schema/Op
+                                match op
+                                  (:states cursor state)
+                                    d! $ %:: app.schema/Op :states
+                                      decode-map-as cursor $ List Dynamic
+                                      , state
+                                  _ $ eprintln "|unexpected confirm op" op
                               fn ()
                                 d! $ :: :remove-code $ .unwrap-or (get store :pointer) |
                                 match
@@ -442,7 +447,10 @@
             add-watch! *reel :changes $ fn (s p) (render-app!)
             listen-devtools! |a $ fn (op)
               hint-fn $ Fn AnyEnum $ -> Unit
-              dispatch! $ decode-map-as op app.schema/Op
+              match op
+                (:reel/toggle)
+                  dispatch! $ %:: app.schema/Op :reel/toggle
+                _ $ eprintln "|unexpected devtools op" op
             browser/set-before-unload! $ fn (e) (persist-storage!)
             browser/set-interval! persist-storage! 60000
             println |App-started.
