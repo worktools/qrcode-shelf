@@ -10,6 +10,14 @@ TODO
 
 ### Workflow
 
+#### Calcit 0.38.0
+
+升级 CLI 和 `@calcit/procs` 到 **0.38.0** 后，按 `deps.cirru` 安装并重新生成 JS。旧二维码、条码及备注继续使用原 Map 存档格式，空备注仍写为 `:note nil`。
+
+应用操作使用具体的字符串 ID、`Option<String>` 备注、Tag 格式和 Respo `CoordKey` 路径。Reel 0.11.0 的面板和快捷键走独立的 `Control` 回调，控制操作不会增加业务历史。
+
+#### Calcit 0.36.0 迁移记录
+
 开发者请同步安装正式 Calcit CLI 和 `@calcit/procs` **0.36.0**，严格安装完整依赖图、重新生成 JS 并刷新。
 正式模块为 Respo 0.19.4、UI 0.15.1、Reel 0.9.2、Feather 0.6.2、Alerts 0.14.0、JS-FFI 0.2.13，传递 Router 0.12.1。新增二维码和编辑备注的 Prompt 回调都接收 String。
 原二维码/条码绘制、默认 CODE128、Map 存档、侧栏条码图标及开发模式的 Inspector/Reel 条件保留。
