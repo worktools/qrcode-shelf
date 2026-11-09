@@ -26,9 +26,11 @@
                       hint-fn $ Fn Dynamic
                         Fn app.schema/Op $ -> Unit
                         -> Unit
-                      d! $ :: :code-format $ {}
-                        :id $ .unwrap $ get code-data :id
-                        :format result
+                      d! $ :: :code-format
+                        decode-map-as
+                          .unwrap $ get code-data :id
+                          , String
+                        decode-map-as result Tag
                       , &unit
               []
                 effect-render-code code $ .unwrap-or (get code-data :barcode-format) :code-128
@@ -74,7 +76,7 @@
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
         'comp-container $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (reel)
+          :code $ quote $ defcomp comp-container (reel on-control)
             let
                 store $ :store reel
                 states $ decode-map-as
@@ -108,7 +110,9 @@
                             hint-fn $ Fn respo.schema/RespoEvent
                               Fn app.schema/Op $ -> Unit
                               -> Unit
-                            d! $ :: :touch-code $ .unwrap-or (get store :pointer) |
+                            d! $ :: :touch-code $ decode-map-as
+                              .unwrap-or (get store :pointer) |
+                              , String
                             scroll-first!
                             , &unit
                       let
@@ -135,7 +139,9 @@
                                 hint-fn $ Fn respo.schema/RespoEvent
                                   Fn app.schema/Op $ -> Unit
                                   -> Unit
-                                d! $ :: :toggle-barcode $ .unwrap (get code-data :id)
+                                d! $ :: :toggle-barcode $ decode-map-as
+                                  .unwrap $ get code-data :id
+                                  , String
                                 , &unit
                           if
                             .unwrap-or (get code-data :barcode?) false
@@ -157,11 +163,13 @@
                                 match op
                                   (:states cursor state)
                                     d! $ app.schema/Op :states
-                                      decode-map-as cursor $ List Dynamic
+                                      decode-map-as cursor $ List respo.schema/CoordKey
                                       , state
                                   _ $ eprintln "|unexpected confirm op" op
                               fn ()
-                                d! $ :: :remove-code $ .unwrap-or (get store :pointer) |
+                                d! $ :: :remove-code $ decode-map-as
+                                  .unwrap-or (get store :pointer) |
+                                  , String
                                 match
                                   first $ .to-list $ keys
                                     let
@@ -199,7 +207,7 @@
                   .render remove-plugin
                   .render create-plugin
                   if dev?
-                    Option :some $ comp-typed-reel (>> states :reel) reel $ {}
+                    Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control
                     Option :none
                   if dev?
                     Option :some $ comp-inspect |store store $ {} (:bottom 0)
@@ -207,6 +215,7 @@
           :examples $ []
           :schema $ quote $ Fn
             reel.typed/State app.schema/Op $ Map Dynamic Dynamic
+            Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
             :features :js-ffi
         'comp-note $ %{} 'CodeEntry (:doc |)
@@ -242,9 +251,7 @@
                             id $ decode-map-as
                               .unwrap $ get code :id
                               , 'String
-                          d! $ :: :note-code $ if (blank? result)
-                            {} $ :id id
-                            {} (:id id) (:note result)
+                          d! $ :: :note-code id $ if (blank? result) (Option :none) (Option :some result)
                       , &unit
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
@@ -415,15 +422,9 @@
             reel.typed/State app.schema/Op $ Map Dynamic Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            if (enum? op)
-              do
-                when config/dev? $ println |Dispatch: op
-                reset! *reel $ match (typed/decode-control op)
-                  (:some control) (typed/apply-control updater @*reel control)
-                  (:none)
-                    typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
-                , &unit
-              raise "|Expected an Enum operation"
+            when config/dev? $ println |Dispatch: op
+            reset! *reel $ typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
+            , &unit
           :examples $ []
           :schema $ quote $ Fn app.schema/Op (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
@@ -445,12 +446,7 @@
               (:none) &unit
             render-app!
             add-watch! *reel :changes $ fn (s p) (render-app!)
-            listen-devtools! |a $ fn (op)
-              hint-fn $ Fn AnyEnum $ -> Unit
-              match op
-                (:reel/toggle)
-                  dispatch! $ app.schema/Op :reel/toggle
-                _ $ eprintln "|unexpected devtools op" op
+            listen-devtools! |a on-control!
             browser/set-before-unload! $ fn (e) (persist-storage!)
             browser/set-interval! persist-storage! 60000
             println |App-started.
@@ -461,6 +457,12 @@
             .unwrap $ respo-browser/query-selector |.app
           :examples $ []
           :schema $ quote $ Fn (-> respo.dom/DomElement) (:features :js-ffi)
+        'on-control! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn on-control! (control)
+            reset! *reel $ typed/apply-control updater @*reel control
+            , &unit
+          :examples $ []
+          :schema $ quote $ Fn reel.typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
@@ -478,7 +480,7 @@
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! (mount-target)
-              fn () $ comp-container @*reel
+              fn () $ comp-container @*reel on-control!
               , dispatch!
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
@@ -502,25 +504,18 @@
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry
-          :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Includes the :reel/* controls that comp-reel sends."
+          :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
-            :states (List Dynamic) Dynamic
+            :states (List respo.schema/CoordKey) Dynamic
             :content Dynamic
-            :hydrate-storage Dynamic
-            :add-code Dynamic
-            :touch-code Dynamic
-            :pointer Dynamic
-            :remove-code Dynamic
-            :note-code Dynamic
-            :code-format Dynamic
-            :toggle-barcode Dynamic
-            :reel/toggle
-            :reel/recall Number
-            :reel/run
-            :reel/step
-            :reel/merge
-            :reel/reset
-            :reel/remove Number
+            :hydrate-storage $ Map Tag Dynamic
+            :add-code String
+            :touch-code String
+            :pointer String
+            :remove-code String
+            :note-code String $ Option String
+            :code-format String Tag
+            :toggle-barcode String
           :examples $ []
           :schema $ quote EnumDef
         'code $ %{} 'CodeEntry (:doc |)
@@ -550,10 +545,7 @@
           :code $ quote $ defn updater (store op op-id op-time)
             decode-map-as
               match op
-                (:states cursor state)
-                  update-states store
-                    decode-map-as cursor $ List Dynamic
-                    , state
+                (:states cursor state) (update-states store cursor state)
                 (:content value) (assoc store :content value)
                 (:hydrate-storage value) value
                 (:add-code value)
@@ -568,26 +560,14 @@
                   -> store
                     dissoc-in $ [] :codes id
                     assoc :pointer nil
-                (:note-code data)
-                  match (get data :note)
-                    (:some note)
-                      assoc-in store
-                        [] :codes
-                          .unwrap $ get data :id
-                          , :note
-                        , note
+                (:note-code id note)
+                  match note
+                    (:some text)
+                      assoc-in store ([] :codes id :note) text
                     (:none)
-                      assoc-in store
-                        [] :codes
-                          .unwrap $ get data :id
-                          , :note
-                        , nil
-                (:code-format data)
-                  assoc-in store
-                    [] :codes
-                      .unwrap $ get data :id
-                      , :barcode-format
-                    .unwrap $ get data :format
+                      assoc-in store ([] :codes id :note) nil
+                (:code-format id format)
+                  assoc-in store ([] :codes id :barcode-format) format
                 (:toggle-barcode id)
                   assoc-in store ([] :codes id :barcode?)
                     not $ .unwrap-or
