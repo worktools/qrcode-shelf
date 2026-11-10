@@ -10,6 +10,10 @@
   :files $ {}
     'app.comp.barcode $ %{} 'FileEntry
       :defs $ {}
+        'BarcodeFormat $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum BarcodeFormat (:code-128) (:gs1-128)
+          :examples $ []
+          :schema $ quote EnumDef
         'barcodes-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def barcodes-list
             [] (:: :item :code-128 |CODE128) (:: :item :gs1-128 |GS1-128)
@@ -26,14 +30,14 @@
                       hint-fn $ Fn Dynamic
                         Fn app.schema/Op $ -> Unit
                         -> Unit
-                      d! $ :: :code-format
+                      d! $ app.schema/Op :code-format
                         decode-map-as
                           .unwrap $ get code-data :id
                           , String
                         decode-map-as result Tag
                       , &unit
               []
-                effect-render-code code $ .unwrap-or (get code-data :barcode-format) :code-128
+                effect-render-code code $ decode-barcode-format $ .unwrap-or (get code-data :barcode-format) :code-128
                 div
                   {} $ :style ui/center
                   div ({})
@@ -41,6 +45,15 @@
                   .render code-menu-plugin
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) String (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
+        'decode-barcode-format $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-barcode-format (raw)
+            if
+              and (tag? raw)
+                = :gs1-128 $ decode-map-as raw 'Tag
+              BarcodeFormat :gs1-128
+              BarcodeFormat :code-128
+          :examples $ []
+          :schema $ quote $ Fn Input (-> app.comp.barcode/BarcodeFormat) (:generics Input)
         'effect-render-code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-render-code (code format) (action el)
             when
@@ -53,13 +66,14 @@
                     jsbarcode image code $ to-js-data $ merge
                       {} $ :displayValue false
                       match format
-                        :gs1-128 $ {} (:format |CODE128) (:ean128 true)
-                        :code-128 $ {} $ :format |CODE128
-                        _ $ {} $ :format |CODE128
+                        (:gs1-128)
+                          {} (:format |CODE128) (:ean128 true)
+                        (:code-128)
+                          {} $ :format |CODE128
                     fn (error) (js/console.error error) (browser/element-set-attribute! image |src |) (browser/element-set-attribute! image |alt |Failed-to-render)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn String Dynamic (-> respo.schema/Effect) (:features :js-ffi)
+          :schema $ quote $ Fn String app.comp.barcode/BarcodeFormat (-> respo.schema/Effect) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.barcode
           :require
