@@ -9,7 +9,7 @@ test('updated barcode package still produces CODE128 binary encoding', () => {
 });
 import test from 'node:test';
 import * as clt from '../js-out/calcit.core.mjs';
-import { store, read_codes, Op } from '../js-out/app.schema.mjs';
+import { store, read_codes, Op, BarcodeFormat } from '../js-out/app.schema.mjs';
 import { updater } from '../js-out/app.updater.mjs';
 import { comp_container } from '../js-out/app.comp.container.mjs';
 import { new_reel, Control } from '../js-out/reel.typed.mjs';
@@ -34,7 +34,7 @@ test('new codes preserve the original map storage shape and selection', () => {
 test('Enum dispatch updates notes, barcode format, toggles and ordering time', () => {
   let next = apply(store, 'add-code', '1234567890');
   next = updater(next, op('note-code', 'code-a', clt._PCT__$o__$o_(clt.Option, clt.to_tag('some'), 'saved-note')), 'note', 100);
-  next = updater(next, op('code-format', 'code-a', tags['gs1-128']), 'format', 100);
+  next = updater(next, op('code-format', 'code-a', clt._PCT__$o__$o_(BarcodeFormat, tags['gs1-128'])), 'format', 100);
   next = apply(next, 'toggle-barcode', 'code-a');
   next = apply(next, 'touch-code', 'code-a', 'event-b', 200);
   const code = clt.option_$o_unwrap(clt.get(read_codes(next), 'code-a'));
