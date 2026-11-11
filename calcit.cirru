@@ -41,14 +41,16 @@
                           _ &unit
                       , &unit
               []
-                effect-render-code code $ decode-barcode-format $ .unwrap-or (get code-data :barcode-format) :code-128
+                effect-render-code code $ match (get code-data :barcode-format)
+                  (:some format) (decode-barcode-format format)
+                  (:none) (app.schema/BarcodeFormat :code-128)
                 div
                   {} $ :style ui/center
                   div ({})
                     img $ {}
                   .render code-menu-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) String (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) String (Map Dynamic V) (-> respo.schema/Component) (:generics V) (:features :js-ffi)
         'decode-barcode-format $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-barcode-format (raw)
             if
@@ -274,7 +276,7 @@
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic V) (-> respo.schema/Component) (:generics V) (:features :js-ffi)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-sidebar (states store)
             div
@@ -552,8 +554,9 @@
               .unwrap $ get store :codes
               Map String $ Map Tag Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic)
+          :schema $ quote $ Fn (Map Dynamic V)
             -> $ Map String $ Map Tag Dynamic
+            :generics V
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {}
