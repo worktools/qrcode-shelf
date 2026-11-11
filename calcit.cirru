@@ -10,14 +10,11 @@
   :files $ {}
     'app.comp.barcode $ %{} 'FileEntry
       :defs $ {}
-        'BarcodeFormat $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum BarcodeFormat (:code-128) (:gs1-128)
-          :examples $ []
-          :schema $ quote EnumDef
         'barcodes-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def barcodes-list
-            [] (:: :item :code-128 |CODE128) (:: :item :gs1-128 |GS1-128)
+            [] (app.schema/BarcodeFormat :code-128) (app.schema/BarcodeFormat :gs1-128)
           :examples $ []
+          :schema $ quote $ List app.schema/BarcodeFormat
         'comp-barcode $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-barcode (states code code-data)
             let
@@ -25,16 +22,23 @@
                   {} (:title |Demo)
                     :style $ {} $ :width 300
                     :backdrop-style $ {}
-                    :items barcodes-list
+                    :items $ .map barcodes-list $ fn (format)
+                      match format
+                        (:code-128) (:: :item :code-128 |CODE128)
+                        (:gs1-128) (:: :item :gs1-128 |GS1-128)
                     :on-result $ fn (result d!)
                       hint-fn $ Fn Dynamic
                         Fn app.schema/Op $ -> Unit
                         -> Unit
-                      d! $ app.schema/Op :code-format
-                        decode-map-as
-                          .unwrap $ get code-data :id
-                          , String
-                        decode-map-as result Tag
+                      when (enum? result)
+                        match result
+                          (:item selected _)
+                            d! $ app.schema/Op :code-format
+                              decode-map-as
+                                .unwrap $ get code-data :id
+                                , String
+                              decode-barcode-format selected
+                          _ &unit
                       , &unit
               []
                 effect-render-code code $ decode-barcode-format $ .unwrap-or (get code-data :barcode-format) :code-128
@@ -50,10 +54,10 @@
             if
               and (tag? raw)
                 = :gs1-128 $ decode-map-as raw 'Tag
-              BarcodeFormat :gs1-128
-              BarcodeFormat :code-128
+              app.schema/BarcodeFormat :gs1-128
+              app.schema/BarcodeFormat :code-128
           :examples $ []
-          :schema $ quote $ Fn Input (-> app.comp.barcode/BarcodeFormat) (:generics Input)
+          :schema $ quote $ Fn Input (-> app.schema/BarcodeFormat) (:generics Input)
         'effect-render-code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-render-code (code format) (action el)
             when
@@ -73,7 +77,7 @@
                     fn (error) (js/console.error error) (browser/element-set-attribute! image |src |) (browser/element-set-attribute! image |alt |Failed-to-render)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn String app.comp.barcode/BarcodeFormat (-> respo.schema/Effect) (:features :js-ffi)
+          :schema $ quote $ Fn String app.schema/BarcodeFormat (-> respo.schema/Effect) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.barcode
           :require
@@ -221,14 +225,14 @@
                   .render remove-plugin
                   .render create-plugin
                   if dev?
-                    Option :some $ comp-typed-reel (>> states :reel) reel ({}) on-control
-                    Option :none
+                    Some $ comp-typed-reel (>> states :reel) reel ({}) on-control
+                    , None
                   if dev?
-                    Option :some $ comp-inspect |store store $ {} (:bottom 0)
-                    Option :none
+                    Some $ comp-inspect |store store $ {} (:bottom 0)
+                    , None
           :examples $ []
           :schema $ quote $ Fn
-            reel.typed/State app.schema/Op $ Map Dynamic Dynamic
+            reel.typed/State schema/Op $ Map Dynamic Dynamic
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
             :features :js-ffi
@@ -265,7 +269,7 @@
                             id $ decode-map-as
                               .unwrap $ get code :id
                               , 'String
-                          d! $ :: :note-code id $ if (blank? result) (Option :none) (Option :some result)
+                          d! $ :: :note-code id $ if (blank? result) None (Some result)
                       , &unit
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
@@ -331,8 +335,8 @@
                         div ({})
                           if
                             .unwrap-or (get code :barcode?) false
-                            Option :some $ comp-i |bar-chart 16 $ hsl 0 0 0
-                            Option :none
+                            Some $ comp-i |bar-chart 16 $ hsl 0 0 0
+                            , None
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-layout $ %{} 'CodeEntry (:doc |)
@@ -421,10 +425,12 @@
           :code $ quote $ def dev?
             = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} (:dev-ui |http://localhost:8100/main-fonts.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main-fonts.css) (:cdn-url |http://cdn.tiye.me/qrcode-shelf/) (:title "|QR Code") (:icon |http://cdn.tiye.me/logo/qrcode-shelf.png) (:storage-key |qrcode-shelf)
           :examples $ []
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.main $ %{} 'FileEntry
@@ -433,14 +439,14 @@
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
           :schema $ quote $ Ref
-            reel.typed/State app.schema/Op $ Map Dynamic Dynamic
+            typed/State schema/Op $ Map Dynamic Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
             reset! *reel $ typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn app.schema/Op (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
             when config/dev? $ load-console-formatter!
@@ -476,7 +482,7 @@
             reset! *reel $ typed/apply-control updater @*reel control
             , &unit
           :examples $ []
-          :schema $ quote $ Fn reel.typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
@@ -517,6 +523,10 @@
             respo.ffi.browser :as respo-browser
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'BarcodeFormat $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum BarcodeFormat (:code-128) (:gs1-128)
+          :examples $ []
+          :schema $ quote EnumDef
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
@@ -528,7 +538,7 @@
             :pointer String
             :remove-code String
             :note-code String $ Option String
-            :code-format String Tag
+            :code-format String app.schema/BarcodeFormat
             :toggle-barcode String
           :examples $ []
           :schema $ quote EnumDef
@@ -581,7 +591,10 @@
                     (:none)
                       assoc-in store ([] :codes id :note) nil
                 (:code-format id format)
-                  assoc-in store ([] :codes id :barcode-format) format
+                  assoc-in store ([] :codes id :barcode-format)
+                    match format
+                      (:code-128) :code-128
+                      (:gs1-128) :gs1-128
                 (:toggle-barcode id)
                   assoc-in store ([] :codes id :barcode?)
                     not $ .unwrap-or
@@ -590,7 +603,7 @@
                 _ $ do (println |Unknown-op: op) store
               Map Dynamic Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) app.schema/Op String Number
+          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/Op String Number
             -> $ Map Dynamic Dynamic
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)

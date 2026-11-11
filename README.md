@@ -10,9 +10,10 @@ TODO
 
 ### Workflow
 
-#### Calcit 0.40.0
+#### Calcit 0.41.0
 
-升级 CLI 和 `@calcit/procs` 到 **0.40.0** 后，按 `deps.cirru` 安装并重新生成 JS。旧二维码、条码及备注继续使用原 Map 存档格式，空备注仍写为 `:note nil`。
+升级 CLI 和 `@calcit/procs` 到 **0.41.0** 后，按 `deps.cirru` 安装并重新生成 JS。旧二维码、条码及备注继续使用原 Map 存档格式，空备注仍写为 `:note nil`。
+内部条码格式操作使用具名 `BarcodeFormat`，存档仍保存原格式 Tag。格式菜单的 Clear 关闭菜单并保留当前格式。
 
 应用操作使用具体的字符串 ID、`Option<String>` 备注、Tag 格式和 Respo `CoordKey` 路径。Reel 0.11.0 的面板和快捷键走独立的 `Control` 回调，控制操作不会增加业务历史。
 
