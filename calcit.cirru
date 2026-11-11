@@ -12,8 +12,9 @@
       :defs $ {}
         'barcodes-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def barcodes-list
-            [] (:: :item :code-128 |CODE128) (:: :item :gs1-128 |GS1-128)
+            [] (app.schema/BarcodeFormat :code-128) (app.schema/BarcodeFormat :gs1-128)
           :examples $ []
+          :schema $ quote $ List app.schema/BarcodeFormat
         'comp-barcode $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-barcode (states code code-data)
             let
@@ -21,7 +22,10 @@
                   {} (:title |Demo)
                     :style $ {} $ :width 300
                     :backdrop-style $ {}
-                    :items barcodes-list
+                    :items $ .map barcodes-list $ fn (format)
+                      match format
+                        (:code-128) (:: :item :code-128 |CODE128)
+                        (:gs1-128) (:: :item :gs1-128 |GS1-128)
                     :on-result $ fn (result d!)
                       hint-fn $ Fn Dynamic
                         Fn app.schema/Op $ -> Unit
@@ -421,10 +425,12 @@
           :code $ quote $ def dev?
             = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
+          :schema $ quote Bool
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
             {} (:dev-ui |http://localhost:8100/main-fonts.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main-fonts.css) (:cdn-url |http://cdn.tiye.me/qrcode-shelf/) (:title "|QR Code") (:icon |http://cdn.tiye.me/logo/qrcode-shelf.png) (:storage-key |qrcode-shelf)
           :examples $ []
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
     'app.main $ %{} 'FileEntry
