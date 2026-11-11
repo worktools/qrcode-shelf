@@ -128,7 +128,7 @@
                             :cursor :pointer
                           fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn app.schema/Op $ -> Unit
+                              Fn schema/Op $ -> Unit
                               -> Unit
                             d! $ :: :touch-code $ decode-map-as
                               .unwrap-or (get store :pointer) |
@@ -157,7 +157,7 @@
                                 :cursor :pointer
                               fn (e d!)
                                 hint-fn $ Fn respo.schema/RespoEvent
-                                  Fn app.schema/Op $ -> Unit
+                                  Fn schema/Op $ -> Unit
                                   -> Unit
                                 d! $ :: :toggle-barcode $ decode-map-as
                                   .unwrap $ get code-data :id
@@ -175,30 +175,21 @@
                         span
                           {} $ :on-click $ fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn app.schema/Op $ -> Unit
+                              Fn schema/Op $ -> Unit
                               -> Unit
-                            .show remove-plugin
-                              fn (op)
-                                hint-fn $ Fn AnyEnum $ -> Unit
-                                match op
-                                  (:states cursor state)
-                                    d! $ app.schema/Op :states
-                                      decode-map-as cursor $ List respo.schema/CoordKey
-                                      , state
-                                  _ $ eprintln "|unexpected confirm op" op
-                              fn ()
-                                d! $ :: :remove-code $ decode-map-as
-                                  .unwrap-or (get store :pointer) |
-                                  , String
-                                match
-                                  first $ .to-list $ keys
-                                    let
-                                        codes $ schema/read-codes store
-                                        pointer $ .unwrap-or (get store :pointer) |
-                                      if (string? pointer) (.dissoc codes pointer) codes
-                                  (:some id)
-                                    d! $ :: :pointer id
-                                  (:none) &unit
+                            .show remove-plugin d! $ fn ()
+                              d! $ :: :remove-code $ decode-map-as
+                                .unwrap-or (get store :pointer) |
+                                , String
+                              match
+                                first $ .to-list $ keys
+                                  let
+                                      codes $ schema/read-codes store
+                                      pointer $ .unwrap-or (get store :pointer) |
+                                    if (string? pointer) (.dissoc codes pointer) codes
+                                (:some id)
+                                  d! $ :: :pointer id
+                                (:none) &unit
                             , &unit
                           comp-i |x-circle 20 $ hsl 0 80 70
                     div
@@ -215,7 +206,7 @@
                         :style $ {} $ :cursor :pointer
                         :on-click $ fn (e d!)
                           hint-fn $ Fn respo.schema/RespoEvent
-                            Fn app.schema/Op $ -> Unit
+                            Fn schema/Op $ -> Unit
                             -> Unit
                           .show create-plugin d! $ fn (result)
                             hint-fn $ Fn String $ -> Unit
@@ -263,7 +254,7 @@
                     :style $ {} $ :cursor :pointer
                     :on-click $ fn (e d!)
                       hint-fn $ Fn respo.schema/RespoEvent
-                        Fn app.schema/Op $ -> Unit
+                        Fn schema/Op $ -> Unit
                         -> Unit
                       .show note-plugin d! $ fn (result)
                         hint-fn $ Fn String $ -> Unit
@@ -311,7 +302,7 @@
                             , style-card
                           :on-click $ fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn app.schema/Op $ -> Unit
+                              Fn schema/Op $ -> Unit
                               -> Unit
                             d! $ :: :pointer $ decode-map-as
                               .unwrap $ get code :id
