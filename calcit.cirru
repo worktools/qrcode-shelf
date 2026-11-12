@@ -390,7 +390,7 @@
             reset! *reel $ typed/record-op updater @*reel op (generate-id!) (shared/now-ms)
             , &unit
           :examples $ []
-          :schema $ quote $ Fn schema/Op (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn schema/Op (-> Unit) (:features :io :js-ffi :state)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (println |Running-mode: config/dev?)
             when config/dev? $ load-console-formatter!
@@ -415,7 +415,7 @@
             browser/set-interval! persist-storage! 60000
             println |App-started.
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'mount-target $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn mount-target ()
             .unwrap $ respo-browser/query-selector |.app
@@ -426,32 +426,32 @@
             reset! *reel $ typed/apply-control updater @*reel control
             , &unit
           :examples $ []
-          :schema $ quote $ Fn typed/Control (-> Unit)
+          :schema $ quote $ Fn typed/Control (-> Unit) (:features :io :state)
         'persist-storage! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-storage! ()
             browser/storage-set!
               .unwrap $ get config/site :storage-key
               format-cirru-edn $ :store @*reel
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi :state)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! () (clear-cache!)
             reset! *reel $ typed/refresh updater @*reel schema/store
             println |Code-updated.
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render-with! (mount-target)
               fn () $ comp-container @*reel on-control!
               , dispatch!
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'snippets $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn snippets () (println config/site)
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require
@@ -485,7 +485,7 @@
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
-            :states (List respo.schema/CoordKey) Dynamic
+            :states (List respo.schema/CoordKey) StateValue
             :hydrate-storage $ Map Tag Dynamic
             :add-code String
             :touch-code String
@@ -496,6 +496,10 @@
             :toggle-barcode String
           :examples $ []
           :schema $ quote EnumDef
+        'StateValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion StateValue Bool Number String Tag (List StateValue) (Map respo.schema/CoordKey StateValue)
+          :examples $ []
+          :schema $ quote UnionDef
         'code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def code
             {} (:id nil) (:code nil) (:note nil) (:timestamp nil) (:barcode? false) (:barcode-format nil)
@@ -596,7 +600,7 @@
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) schema/Op String Number
             -> $ Map Dynamic Dynamic
-            :features :js-ffi
+            :features :io :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require
