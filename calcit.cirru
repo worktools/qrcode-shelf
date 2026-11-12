@@ -34,33 +34,18 @@
                         (:ok item)
                           match item $
                             :item selected _
-                            d! $ app.schema/Op :code-format
-                              decode-map-as
-                                .unwrap $ get code-data :id
-                                , String
-                              decode-barcode-format selected
+                            d! $ app.schema/Op :code-format (code-data :id) (app.schema/decode-barcode-format selected)
                         (:err _) &unit
                       , &unit
               []
-                effect-render-code code $ match (get code-data :barcode-format)
-                  (:some format) (decode-barcode-format format)
-                  (:none) (app.schema/BarcodeFormat :code-128)
+                effect-render-code code $ code-data :format
                 div
                   {} $ :style ui/center
                   div ({})
                     img $ {}
                   .render code-menu-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) String (Map Dynamic V) (-> respo.schema/Component) (:generics V) (:features :js-ffi)
-        'decode-barcode-format $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn decode-barcode-format (raw)
-            if
-              and (tag? raw)
-                = :gs1-128 $ decode-map-as raw 'Tag
-              app.schema/BarcodeFormat :gs1-128
-              app.schema/BarcodeFormat :code-128
-          :examples $ []
-          :schema $ quote $ Fn Input (-> app.schema/BarcodeFormat) (:generics Input)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) String app.schema/CodeView (-> respo.schema/Component) (:features :js-ffi)
         'effect-render-code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-render-code (code format) (action el)
             when
@@ -137,14 +122,10 @@
                             scroll-first!
                             , &unit
                       let
-                          code-data $ decode-map-as
-                            .unwrap-or
-                              get-in store $ [] :codes $ .unwrap-or (get store :pointer) |
-                              , nil
-                            Map Tag Dynamic
-                          code $ decode-map-as
-                            .unwrap $ get code-data :code
-                            , 'String
+                          code-data $ app.schema/read-code-view $ .unwrap-or
+                            get-in store $ [] :codes $ .unwrap-or (get store :pointer) |
+                            , nil
+                          code $ code-data :code
                         div
                           {} $ :style $ merge ui/expand ui/center
                           div
@@ -160,12 +141,9 @@
                                 hint-fn $ Fn respo.schema/RespoEvent
                                   Fn schema/Op $ -> Unit
                                   -> Unit
-                                d! $ :: :toggle-barcode $ decode-map-as
-                                  .unwrap $ get code-data :id
-                                  , String
+                                d! $ :: :toggle-barcode $ code-data :id
                                 , &unit
-                          if
-                            .unwrap-or (get code-data :barcode?) false
+                          if (code-data :barcode?)
                             comp-barcode (>> states :barcode) code code-data
                             comp-qrcode code
                           comp-note (>> states :note) code-data
@@ -235,19 +213,11 @@
             let
                 note-plugin $ use-prompt (>> states :create)
                   {} (:text "|Some note:") (:button-text |Add)
-                    :initial $ decode-map-as
-                      match (get code :note)
-                        (:some note) (or note |)
-                        (:none) |
-                      , 'String
+                    :initial $ .unwrap-or (code :note) |
               div
                 {} $ :style ui/row-middle
                 <>
-                  decode-map-as
-                    match (get code :note)
-                      (:some note) (or note |...)
-                      (:none) |...
-                    , 'String
+                  .unwrap-or (code :note) |...
                   {} $ :color $ hsl 0 0 70
                 space-x 8
                 span
@@ -260,15 +230,13 @@
                       .show note-plugin d! $ fn (result)
                         hint-fn $ Fn String $ -> Unit
                         let
-                            id $ decode-map-as
-                              .unwrap $ get code :id
-                              , 'String
+                            id $ code :id
                           d! $ :: :note-code id $ if (blank? result) None (Some result)
                       , &unit
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic V) (-> respo.schema/Component) (:generics V) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :js-ffi)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-sidebar (states store)
             div
@@ -281,23 +249,15 @@
                 {}
                   :style $ merge $ {} (:margin :auto) (:white-space :nowrap)
                   :class-name |scroll-area
-                -> (schema/read-codes store) distinct-values .to-list
+                -> (schema/read-codes store) distinct-values .to-list (.map schema/read-code-view)
                   .sort-by $ fn (code)
-                    - 0 $ decode-map-as
-                      .unwrap $ get code :time
-                      , 'Number
+                    - 0 $ code :time
                   .map $ fn (code)
-                    []
-                      decode-map-as
-                        .unwrap $ get code :id
-                        , 'String
+                    [] (code :id)
                       div
                         {}
                           :style $ if
-                            =
-                              decode-map-as
-                                .unwrap $ get code :id
-                                , 'String
+                            = (code :id)
                               .unwrap-or (get store :pointer) |
                             assoc style-card :background-color :white
                             , style-card
@@ -305,30 +265,20 @@
                             hint-fn $ Fn respo.schema/RespoEvent
                               Fn schema/Op $ -> Unit
                               -> Unit
-                            d! $ :: :pointer $ decode-map-as
-                              .unwrap $ get code :id
-                              , 'String
+                            d! $ :: :pointer $ code :id
                             , &unit
                         div ({})
-                          <>
-                            decode-map-as
-                              .unwrap $ get code :code
-                              , 'String
+                          <> (code :code)
                             {} (:font-size 16) (:line-height |40px) (:display :inline-block)
                         div ({})
                           <>
-                            decode-map-as
-                              match (get code :note)
-                                (:some note) (or note |)
-                                (:none) |
-                              , 'String
+                            .unwrap-or (code :note) |
                             {}
                               :color $ hsl 0 0 80
                               :font-family ui/font-normal
                               :font-size 12
                         div ({})
-                          if
-                            .unwrap-or (get code :barcode?) false
+                          if (code :barcode?)
                             Some $ comp-i |bar-chart 16 $ hsl 0 0 0
                             , None
           :examples $ []
@@ -525,6 +475,13 @@
           :code $ quote $ defenum BarcodeMenuItem (:item Tag String)
           :examples $ []
           :schema $ quote EnumDef
+        'CodeView $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct CodeView (:id String) (:code String) (:time Number)
+            :note $ Option String
+            :barcode? Bool
+            :format app.schema/BarcodeFormat
+          :examples $ []
+          :schema $ quote StructDef
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
@@ -543,6 +500,43 @@
           :code $ quote $ def code
             {} (:id nil) (:code nil) (:note nil) (:timestamp nil) (:barcode? false) (:barcode-format nil)
           :examples $ []
+        'decode-barcode-format $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-barcode-format (raw)
+            if
+              and (tag? raw)
+                = :gs1-128 $ decode-map-as raw 'Tag
+              app.schema/BarcodeFormat :gs1-128
+              app.schema/BarcodeFormat :code-128
+          :examples $ []
+          :schema $ quote $ Fn Input (-> BarcodeFormat) (:generics Input)
+        'read-code-view $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn read-code-view (raw)
+            let
+                fields $ decode-map-as raw $ Map Tag Dynamic
+                note $ .and-then (get fields :note)
+                  fn (value)
+                    if value
+                      Some $ decode-map-as value String
+                      , None
+              CodeView :id
+                decode-map-as
+                  .unwrap $ get fields :id
+                  , String
+                , :code
+                  decode-map-as
+                    .unwrap $ get fields :code
+                    , String
+                  , :time
+                    decode-map-as
+                      .unwrap $ get fields :time
+                      , Number
+                    , :note note :barcode?
+                      if
+                        .unwrap-or (get fields :barcode?) false
+                        , true false
+                      , :format $ decode-barcode-format $ .unwrap-or (get fields :barcode-format) :code-128
+          :examples $ []
+          :schema $ quote $ Fn Input (-> CodeView) (:generics Input)
         'read-codes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-codes (store)
             decode-map-as
