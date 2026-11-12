@@ -249,7 +249,7 @@
                 {}
                   :style $ merge $ {} (:margin :auto) (:white-space :nowrap)
                   :class-name |scroll-area
-                -> (schema/read-codes store) distinct-values .to-list
+                -> (schema/read-codes store) distinct-values .to-list (.map schema/read-code-view)
                   .sort-by $ fn (code)
                     - 0 $ code :time
                   .map $ fn (code)
@@ -539,15 +539,12 @@
           :schema $ quote $ Fn Input (-> CodeView) (:generics Input)
         'read-codes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-codes (store)
-            filter-map-kv
-              decode-map-as
-                .unwrap $ get store :codes
-                Map String $ Map Tag Dynamic
-              fn (id raw)
-                MapEntryDecision :keep id $ read-code-view raw
+            decode-map-as
+              .unwrap $ get store :codes
+              Map String $ Map Tag Dynamic
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic V)
-            -> $ Map String CodeView
+            -> $ Map String $ Map Tag Dynamic
             :generics V
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
