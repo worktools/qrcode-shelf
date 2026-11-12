@@ -24,21 +24,22 @@
                     :backdrop-style $ {}
                     :items $ .map barcodes-list $ fn (format)
                       match format
-                        (:code-128) (:: :item :code-128 |CODE128)
-                        (:gs1-128) (:: :item :gs1-128 |GS1-128)
+                        (:code-128) (app.schema/BarcodeMenuItem :item :code-128 |CODE128)
+                        (:gs1-128) (app.schema/BarcodeMenuItem :item :gs1-128 |GS1-128)
                     :on-result $ fn (result d!)
                       hint-fn $ Fn Dynamic
                         Fn app.schema/Op $ -> Unit
                         -> Unit
-                      when (enum? result)
-                        match result
-                          (:item selected _)
+                      match (try-decode-map-as result app.schema/BarcodeMenuItem)
+                        (:ok item)
+                          match item $
+                            :item selected _
                             d! $ app.schema/Op :code-format
                               decode-map-as
                                 .unwrap $ get code-data :id
                                 , String
                               decode-barcode-format selected
-                          _ &unit
+                        (:err _) &unit
                       , &unit
               []
                 effect-render-code code $ match (get code-data :barcode-format)
@@ -520,11 +521,14 @@
           :code $ quote $ defenum BarcodeFormat (:code-128) (:gs1-128)
           :examples $ []
           :schema $ quote EnumDef
+        'BarcodeMenuItem $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum BarcodeMenuItem (:item Tag String)
+          :examples $ []
+          :schema $ quote EnumDef
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
             :states (List respo.schema/CoordKey) Dynamic
-            :content Dynamic
             :hydrate-storage $ Map Tag Dynamic
             :add-code String
             :touch-code String
@@ -564,7 +568,6 @@
             decode-map-as
               match op
                 (:states cursor state) (update-states store cursor state)
-                (:content value) (assoc store :content value)
                 (:hydrate-storage value) value
                 (:add-code value)
                   -> store
