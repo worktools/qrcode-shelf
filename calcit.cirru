@@ -24,21 +24,22 @@
                     :backdrop-style $ {}
                     :items $ .map barcodes-list $ fn (format)
                       match format
-                        (:code-128) (:: :item :code-128 |CODE128)
-                        (:gs1-128) (:: :item :gs1-128 |GS1-128)
+                        (:code-128) (app.schema/BarcodeMenuItem :item :code-128 |CODE128)
+                        (:gs1-128) (app.schema/BarcodeMenuItem :item :gs1-128 |GS1-128)
                     :on-result $ fn (result d!)
                       hint-fn $ Fn Dynamic
                         Fn app.schema/Op $ -> Unit
                         -> Unit
-                      when (enum? result)
-                        match result
-                          (:item selected _)
+                      match (try-decode-map-as result app.schema/BarcodeMenuItem)
+                        (:ok item)
+                          match item $
+                            :item selected _
                             d! $ app.schema/Op :code-format
                               decode-map-as
                                 .unwrap $ get code-data :id
                                 , String
                               decode-barcode-format selected
-                          _ &unit
+                        (:err _) &unit
                       , &unit
               []
                 effect-render-code code $ match (get code-data :barcode-format)
@@ -128,7 +129,7 @@
                             :cursor :pointer
                           fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn app.schema/Op $ -> Unit
+                              Fn schema/Op $ -> Unit
                               -> Unit
                             d! $ :: :touch-code $ decode-map-as
                               .unwrap-or (get store :pointer) |
@@ -157,7 +158,7 @@
                                 :cursor :pointer
                               fn (e d!)
                                 hint-fn $ Fn respo.schema/RespoEvent
-                                  Fn app.schema/Op $ -> Unit
+                                  Fn schema/Op $ -> Unit
                                   -> Unit
                                 d! $ :: :toggle-barcode $ decode-map-as
                                   .unwrap $ get code-data :id
@@ -175,30 +176,21 @@
                         span
                           {} $ :on-click $ fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn app.schema/Op $ -> Unit
+                              Fn schema/Op $ -> Unit
                               -> Unit
-                            .show remove-plugin
-                              fn (op)
-                                hint-fn $ Fn AnyEnum $ -> Unit
-                                match op
-                                  (:states cursor state)
-                                    d! $ app.schema/Op :states
-                                      decode-map-as cursor $ List respo.schema/CoordKey
-                                      , state
-                                  _ $ eprintln "|unexpected confirm op" op
-                              fn ()
-                                d! $ :: :remove-code $ decode-map-as
-                                  .unwrap-or (get store :pointer) |
-                                  , String
-                                match
-                                  first $ .to-list $ keys
-                                    let
-                                        codes $ schema/read-codes store
-                                        pointer $ .unwrap-or (get store :pointer) |
-                                      if (string? pointer) (.dissoc codes pointer) codes
-                                  (:some id)
-                                    d! $ :: :pointer id
-                                  (:none) &unit
+                            .show remove-plugin d! $ fn ()
+                              d! $ :: :remove-code $ decode-map-as
+                                .unwrap-or (get store :pointer) |
+                                , String
+                              match
+                                first $ .to-list $ keys
+                                  let
+                                      codes $ schema/read-codes store
+                                      pointer $ .unwrap-or (get store :pointer) |
+                                    if (string? pointer) (.dissoc codes pointer) codes
+                                (:some id)
+                                  d! $ :: :pointer id
+                                (:none) &unit
                             , &unit
                           comp-i |x-circle 20 $ hsl 0 80 70
                     div
@@ -215,7 +207,7 @@
                         :style $ {} $ :cursor :pointer
                         :on-click $ fn (e d!)
                           hint-fn $ Fn respo.schema/RespoEvent
-                            Fn app.schema/Op $ -> Unit
+                            Fn schema/Op $ -> Unit
                             -> Unit
                           .show create-plugin d! $ fn (result)
                             hint-fn $ Fn String $ -> Unit
@@ -263,7 +255,7 @@
                     :style $ {} $ :cursor :pointer
                     :on-click $ fn (e d!)
                       hint-fn $ Fn respo.schema/RespoEvent
-                        Fn app.schema/Op $ -> Unit
+                        Fn schema/Op $ -> Unit
                         -> Unit
                       .show note-plugin d! $ fn (result)
                         hint-fn $ Fn String $ -> Unit
@@ -311,7 +303,7 @@
                             , style-card
                           :on-click $ fn (e d!)
                             hint-fn $ Fn respo.schema/RespoEvent
-                              Fn app.schema/Op $ -> Unit
+                              Fn schema/Op $ -> Unit
                               -> Unit
                             d! $ :: :pointer $ decode-map-as
                               .unwrap $ get code :id
@@ -529,11 +521,14 @@
           :code $ quote $ defenum BarcodeFormat (:code-128) (:gs1-128)
           :examples $ []
           :schema $ quote EnumDef
+        'BarcodeMenuItem $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum BarcodeMenuItem (:item Tag String)
+          :examples $ []
+          :schema $ quote EnumDef
         'Op $ %{} 'CodeEntry
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
             :states (List respo.schema/CoordKey) Dynamic
-            :content Dynamic
             :hydrate-storage $ Map Tag Dynamic
             :add-code String
             :touch-code String
@@ -573,7 +568,6 @@
             decode-map-as
               match op
                 (:states cursor state) (update-states store cursor state)
-                (:content value) (assoc store :content value)
                 (:hydrate-storage value) value
                 (:add-code value)
                   -> store
