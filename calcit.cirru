@@ -500,10 +500,6 @@
           :code $ quote $ defunion StateValue Bool Number String Tag (List StateValue) (Map respo.schema/CoordKey StateValue)
           :examples $ []
           :schema $ quote UnionDef
-        'code $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def code
-            {} (:id nil) (:code nil) (:note nil) (:timestamp nil) (:barcode? false) (:barcode-format nil)
-          :examples $ []
         'decode-barcode-format $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-barcode-format (raw)
             if
@@ -570,7 +566,7 @@
                 (:add-code value)
                   -> store
                     assoc-in ([] :codes op-id)
-                      merge schema/code $ {} (:id op-id) (:code value) (:time op-time)
+                      {} (:id op-id) (:code value) (:time op-time) (:note nil) (:timestamp nil) (:barcode? false) (:barcode-format nil)
                     assoc :pointer op-id
                 (:touch-code id)
                   assoc-in store ([] :codes id :time) op-time
