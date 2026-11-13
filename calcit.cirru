@@ -547,9 +547,9 @@
               .unwrap $ get store :codes
               Map String $ Map Tag Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic V)
+          :schema $ quote $ Fn Input
             -> $ Map String $ Map Tag Dynamic
-            :generics V
+            :generics Input
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {}
