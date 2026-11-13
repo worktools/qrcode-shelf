@@ -163,7 +163,7 @@
                               match
                                 first $ .to-list $ keys
                                   let
-                                      codes $ schema/read-codes $ .unwrap (get store :codes)
+                                      codes $ schema/read-codes store
                                       pointer $ .unwrap-or (get store :pointer) |
                                     if (string? pointer) (.dissoc codes pointer) codes
                                 (:some id)
@@ -249,40 +249,38 @@
                 {}
                   :style $ merge $ {} (:margin :auto) (:white-space :nowrap)
                   :class-name |scroll-area
-                ->
-                  schema/read-codes $ .unwrap $ get store :codes
-                  , distinct-values .to-list (.map schema/read-code-view)
-                    .sort-by $ fn (code)
-                      - 0 $ code :time
-                    .map $ fn (code)
-                      [] (code :id)
-                        div
-                          {}
-                            :style $ if
-                              = (code :id)
-                                .unwrap-or (get store :pointer) |
-                              assoc style-card :background-color :white
-                              , style-card
-                            :on-click $ fn (e d!)
-                              hint-fn $ Fn respo.schema/RespoEvent
-                                Fn schema/Op $ -> Unit
-                                -> Unit
-                              d! $ :: :pointer $ code :id
-                              , &unit
-                          div ({})
-                            <> (code :code)
-                              {} (:font-size 16) (:line-height |40px) (:display :inline-block)
-                          div ({})
-                            <>
-                              .unwrap-or (code :note) |
-                              {}
-                                :color $ hsl 0 0 80
-                                :font-family ui/font-normal
-                                :font-size 12
-                          div ({})
-                            if (code :barcode?)
-                              Some $ comp-i |bar-chart 16 $ hsl 0 0 0
-                              , None
+                -> (schema/read-codes store) distinct-values .to-list (.map schema/read-code-view)
+                  .sort-by $ fn (code)
+                    - 0 $ code :time
+                  .map $ fn (code)
+                    [] (code :id)
+                      div
+                        {}
+                          :style $ if
+                            = (code :id)
+                              .unwrap-or (get store :pointer) |
+                            assoc style-card :background-color :white
+                            , style-card
+                          :on-click $ fn (e d!)
+                            hint-fn $ Fn respo.schema/RespoEvent
+                              Fn schema/Op $ -> Unit
+                              -> Unit
+                            d! $ :: :pointer $ code :id
+                            , &unit
+                        div ({})
+                          <> (code :code)
+                            {} (:font-size 16) (:line-height |40px) (:display :inline-block)
+                        div ({})
+                          <>
+                            .unwrap-or (code :note) |
+                            {}
+                              :color $ hsl 0 0 80
+                              :font-family ui/font-normal
+                              :font-size 12
+                        div ({})
+                          if (code :barcode?)
+                            Some $ comp-i |bar-chart 16 $ hsl 0 0 0
+                            , None
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-layout $ %{} 'CodeEntry (:doc |)
@@ -544,8 +542,10 @@
           :examples $ []
           :schema $ quote $ Fn Input (-> CodeView) (:generics Input)
         'read-codes $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn read-codes (raw)
-            decode-map-as raw $ Map String $ Map Tag Dynamic
+          :code $ quote $ defn read-codes (store)
+            decode-map-as
+              .unwrap $ get store :codes
+              Map String $ Map Tag Dynamic
           :examples $ []
           :schema $ quote $ Fn Input
             -> $ Map String $ Map Tag Dynamic
