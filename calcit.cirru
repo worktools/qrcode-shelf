@@ -27,9 +27,6 @@
                         (:code-128) (app.schema/BarcodeMenuItem :item :code-128 |CODE128)
                         (:gs1-128) (app.schema/BarcodeMenuItem :item :gs1-128 |GS1-128)
                     :on-result $ fn (result d!)
-                      hint-fn $ Fn Dynamic
-                        Fn app.schema/Op $ -> Unit
-                        -> Unit
                       match (try-decode-map-as result app.schema/BarcodeMenuItem)
                         (:ok item)
                           match item $
