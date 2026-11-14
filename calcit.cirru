@@ -204,7 +204,7 @@
             reel.typed/State schema/Op $ Map Dynamic Dynamic
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
-            :features :js-ffi
+            :features :js-ffi :state
         'comp-note $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-note (states code)
             let
@@ -233,7 +233,7 @@
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :js-ffi :state)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-sidebar (states store)
             div
