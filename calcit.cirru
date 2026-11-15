@@ -173,7 +173,7 @@
                         {} (:font-family ui/font-fancy) (:font-size 24)
                           :color $ hsl 0 0 80
                       <> "|No selection"
-                  comp-sidebar states store
+                  comp-sidebar store
                   div
                     {} $ :style $ merge ui/center
                       {} (:padding 16) (:margin :auto)
@@ -204,7 +204,7 @@
             reel.typed/State schema/Op $ Map Dynamic Dynamic
             Fn reel.typed/Control $ -> Unit
             -> respo.schema/Component
-            :features :js-ffi
+            :features :js-ffi :state
         'comp-note $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-note (states code)
             let
@@ -233,9 +233,9 @@
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :js-ffi :state)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-sidebar (states store)
+          :code $ quote $ defcomp comp-sidebar (store)
             div
               {} $ :style $ merge ui/expand
                 {}
@@ -279,7 +279,7 @@
                             Some $ comp-i |bar-chart 16 $ hsl 0 0 0
                             , None
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-layout $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-layout () (action el) &unit
           :examples $ []
