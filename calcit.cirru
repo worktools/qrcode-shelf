@@ -202,9 +202,9 @@
           :examples $ []
           :schema $ quote $ Fn
             reel.typed/State schema/Op $ Map Dynamic Dynamic
-            Fn reel.typed/Control $ -> Unit
+            Fn reel.typed/Control (-> Unit) (:features :io :state)
             -> respo.schema/Component
-            :features :js-ffi :state
+            :features :io :js-ffi :state
         'comp-note $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-note (states code)
             let
@@ -233,7 +233,7 @@
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :js-ffi :state)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :io :js-ffi :state)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-sidebar (store)
             div
@@ -588,12 +588,10 @@
                     not $ .unwrap-or
                       get-in store $ [] :codes id :barcode?
                       , false
-                _ $ do (println |Unknown-op: op) store
               Map Dynamic Dynamic
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) schema/Op String Number
             -> $ Map Dynamic Dynamic
-            :features :io :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require
