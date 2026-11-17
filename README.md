@@ -49,6 +49,7 @@ caps verify --toolchain
 calcit --check-only --all-defs
 calcit fix --workflow strict --verify
 yarn build
+calcit --reload-fn respo.render.html/make-string js
 node --test scripts/qrcode-regression.test.mjs
 ```
 
