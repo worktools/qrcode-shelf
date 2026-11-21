@@ -12,10 +12,11 @@ TODO
 
 #### Calcit 0.44.0
 
-升级 CLI 和 `@calcit/procs` 到 **0.44.0** 后，按 `deps.cirru` 安装并重新生成 JS。旧二维码、条码及备注继续使用原 Map 存档格式，空备注仍写为 `:note nil`。
+升级 CLI 和 `@calcit/procs` 到 **0.44.0** 后，按 `deps.cirru` 安装并重新生成 JS。正式模块为 Reel 0.11.5、UI 0.15.7、Respo 0.19.13、Feather 0.6.9、Alerts 0.14.8、JS-FFI 0.2.19，传递 Router 0.12.11。旧二维码、条码及备注继续使用原 Map 存档格式，空备注仍写为 `:note nil`。
+存档入口已校验顶层 Tag 键，Reel 和 updater 使用相同的 `Map Tag Dynamic` 合同，嵌套数据格式保持不变。
 内部条码格式操作使用具名 `BarcodeFormat`，存档仍保存原格式 Tag。格式菜单的 Clear 关闭菜单并保留当前格式。
 
-应用操作使用具体的字符串 ID、`Option<String>` 备注、Tag 格式和 Respo `CoordKey` 路径。Reel 0.11.4 的面板和快捷键走独立的 `Control` 回调，控制操作不会增加业务历史。
+应用操作使用具体的字符串 ID、`Option<String>` 备注、Tag 格式和 Respo `CoordKey` 路径。Reel 0.11.5 的面板和快捷键走独立的 `Control` 回调，控制操作不会增加业务历史。
 
 #### Calcit 0.36.0 迁移记录
 

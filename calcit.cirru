@@ -380,7 +380,7 @@
           :code $ quote $ defref *reel (typed/new-reel schema/store)
           :examples $ []
           :schema $ quote $ Ref
-            typed/State schema/Op $ Map Dynamic Dynamic
+            typed/State schema/Op $ Map Tag Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             when config/dev? $ println |Dispatch: op
@@ -550,6 +550,7 @@
               :codes $ {}
               :pointer nil
           :examples $ []
+          :schema $ quote $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.updater $ %{} 'FileEntry
@@ -588,10 +589,10 @@
                     not $ .unwrap-or
                       get-in store $ [] :codes id :barcode?
                       , false
-              Map Dynamic Dynamic
+              Map Tag Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/Op String Number
-            -> $ Map Dynamic Dynamic
+          :schema $ quote $ Fn (Map Tag Dynamic) schema/Op String Number
+            -> $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require
