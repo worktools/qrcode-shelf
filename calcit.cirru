@@ -201,7 +201,7 @@
                     , None
           :examples $ []
           :schema $ quote $ Fn
-            reel.typed/State schema/Op $ Map Dynamic Dynamic
+            reel.typed/State schema/Op $ Map Tag Dynamic
             Fn reel.typed/Control (-> Unit) (:features :io :state)
             -> respo.schema/Component
             :features :io :js-ffi :state
@@ -279,7 +279,7 @@
                             Some $ comp-i |bar-chart 16 $ hsl 0 0 0
                             , None
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> respo.schema/Component) (:features :js-ffi)
         'effect-layout $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-layout () (action el) &unit
           :examples $ []
