@@ -42,7 +42,7 @@
                     img $ {}
                   .render code-menu-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) String app.schema/CodeView (-> respo.schema/Component) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic StateValue) String app.schema/CodeView (-> respo.schema/Component) (:generics StateValue) (:features :js-ffi)
         'effect-render-code $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defeffect effect-render-code (code format) (action el)
             when
@@ -233,7 +233,7 @@
                   comp-i |edit 14 $ hsl 0 0 80
                 .render note-plugin
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) schema/CodeView (-> respo.schema/Component) (:features :io :js-ffi :state)
+          :schema $ quote $ Fn (Map Dynamic StateValue) schema/CodeView (-> respo.schema/Component) (:generics StateValue) (:features :io :js-ffi :state)
         'comp-sidebar $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-sidebar (store)
             div
