@@ -10,9 +10,9 @@ TODO
 
 ### Workflow
 
-#### Calcit 0.46.0 迁移候选
+#### Calcit 0.47.1
 
-此候选需使用 Calcit CLI 和 `@calcit/procs` **0.46.0**，并等待 Alerts 0.14.12 发布后才能按 `deps.cirru` 安装完整依赖图。Reel、UI、Respo、Feather 和 JS-FFI 分别对齐 0.11.10、0.16.6、0.20.0、0.6.14 和 0.2.26。
+升级 CLI 和 `@calcit/procs` 到 **0.47.1** 后，按 `deps.cirru` 安装并重新生成 JS。正式模块为 Reel 0.11.11、UI 0.16.7、Respo 0.20.1、Feather 0.6.15、Alerts 0.14.13、JS-FFI 0.2.26，传递 Router 0.12.19。
 
 插件状态通过专用 `:plugin-state` 操作保留旧 Map 中的未知字段及 `nil`，保持整体替换；普通状态操作仍使用递归 `StateValue`。旧二维码、条码与备注存档格式不变。
 

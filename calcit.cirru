@@ -100,7 +100,8 @@
                   {} $ :style $ merge ui/global ui/fullscreen ui/column
                   if
                     match (get store :pointer)
-                      (:some pointer) (non-nil? pointer)
+                      (:some pointer)
+                        .some? $ nil->option pointer
                       (:none) false
                     div
                       {} $ :style $ merge ui/expand ui/column
@@ -165,7 +166,9 @@
                                   let
                                       codes $ schema/read-codes store
                                       pointer $ .unwrap-or (get store :pointer) |
-                                    if (string? pointer) (.dissoc codes pointer) codes
+                                    match (try-decode-map-as pointer String)
+                                      (:ok ptr) (.dissoc codes ptr)
+                                      (:err _) codes
                                 (:some id)
                                   d! $ :: :pointer id
                                 (:none) &unit
@@ -504,11 +507,10 @@
           :schema $ quote UnionDef
         'decode-barcode-format $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-barcode-format (raw)
-            if
-              and (tag? raw)
-                = :gs1-128 $ decode-map-as raw 'Tag
-              app.schema/BarcodeFormat :gs1-128
-              app.schema/BarcodeFormat :code-128
+            match (try-decode-map-as raw Tag)
+              (:ok t)
+                if (= t :gs1-128) (app.schema/BarcodeFormat :gs1-128) (app.schema/BarcodeFormat :code-128)
+              (:err _) (app.schema/BarcodeFormat :code-128)
           :examples $ []
           :schema $ quote $ Fn Input (-> BarcodeFormat) (:generics Input)
         'legacy-not $ %{} 'CodeEntry
@@ -520,8 +522,15 @@
         'legacy-truthy? $ %{} 'CodeEntry
           :doc "|Preserve legacy truthiness for values read from old stores."
           :code $ quote $ defn legacy-truthy? (value)
-            if (bool? value) value $ not $ or (nil? value)
-              = (type-of value) :unit
+            match (nil->option value)
+              (:none) false
+              (:some present)
+                match (try-decode-map-as present Bool)
+                  (:ok b) b
+                  (:err _)
+                    match (try-decode-map-as present Unit)
+                      (:ok _) false
+                      (:err _) true
           :examples $ []
           :schema $ quote $ Fn T (-> Bool) (:generics T)
           :tests $ [] $ %{} 'TestEntry (:name |legacy-conditions)
