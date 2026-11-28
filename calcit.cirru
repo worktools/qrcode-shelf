@@ -18,7 +18,7 @@
         'comp-barcode $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-barcode (states code code-data)
             let
-                code-menu-plugin $ use-modal-menu (>> states :codes)
+                code-menu-plugin $ use-modal-menu-with (>> states :codes)
                   {} (:title |Demo)
                     :style $ {} $ :width 300
                     :backdrop-style $ {}
@@ -34,6 +34,7 @@
                             d! $ app.schema/Op :code-format (code-data :id) (app.schema/decode-barcode-format selected)
                         (:err _) &unit
                       , &unit
+                  , app.schema/plugin-state-op
               []
                 effect-render-code code $ code-data :format
                 div
@@ -74,7 +75,7 @@
             app.config :refer $ dev?
             |qrcode :as qrcode
             |jsbarcode :default jsbarcode
-            respo-alerts.core :refer $ use-modal-menu comp-modal-menu
+            respo-alerts.core :refer $ use-modal-menu-with
             js-ffi.browser :as browser
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -85,13 +86,15 @@
                 states $ decode-map-as
                   .unwrap $ get store :states
                   Map Tag Dynamic
-                remove-plugin $ use-confirm (>> states :remove)
+                remove-plugin $ use-confirm-with (>> states :remove)
                   {} $ :text "|Are use sure to remove?"
-                create-plugin $ use-prompt (>> states :create)
+                  , app.schema/plugin-state-op
+                create-plugin $ use-prompt-with (>> states :create)
                   {}
                     :input-style $ {} $ :font-family ui/font-code
                     :text "|Add new code"
                     :button-text |Render
+                  , app.schema/plugin-state-op
               [] (effect-layout)
                 div
                   {} $ :style $ merge ui/global ui/fullscreen ui/column
@@ -208,9 +211,10 @@
         'comp-note $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-note (states code)
             let
-                note-plugin $ use-prompt (>> states :create)
+                note-plugin $ use-prompt-with (>> states :create)
                   {} (:text "|Some note:") (:button-text |Add)
                     :initial $ .unwrap-or (code :note) |
+                  , app.schema/plugin-state-op
               div
                 {} $ :style ui/row-middle
                 <>
@@ -254,7 +258,7 @@
                       div
                         {}
                           :style $ if
-                            = (code :id)
+                            &= (code :id)
                               .unwrap-or (get store :pointer) |
                             assoc style-card :background-color :white
                             , style-card
@@ -318,7 +322,7 @@
             app.comp.barcode :refer $ comp-barcode
             |qrcode :as qrcode
             feather.core :refer $ comp-icon comp-i
-            respo-alerts.core :refer $ use-prompt use-confirm
+            respo-alerts.core :refer $ use-prompt-with use-confirm-with
             js-ffi.browser :as browser
             app.schema :as schema
     'app.comp.qrcode $ %{} 'FileEntry
@@ -483,6 +487,7 @@
           :doc "|Dispatch Op of QRCode Shelf, bound to the :dispatch-op type slot. Reel Control is delivered through its own callback."
           :code $ quote $ defenum Op
             :states (List respo.schema/CoordKey) StateValue
+            :plugin-state (List respo.schema/CoordKey) (Map Dynamic Dynamic)
             :hydrate-storage $ Map Tag Dynamic
             :add-code String
             :touch-code String
@@ -506,13 +511,39 @@
               app.schema/BarcodeFormat :code-128
           :examples $ []
           :schema $ quote $ Fn Input (-> BarcodeFormat) (:generics Input)
+        'legacy-not $ %{} 'CodeEntry
+          :doc "|Preserve JavaScript truthiness when toggling old barcode values."
+          :code $ quote $ defn legacy-not (value)
+            not $ decode-map-as (js/Boolean value) Bool
+          :examples $ []
+          :schema $ quote $ Fn T (-> Bool) (:generics T) (:features :js-ffi)
+        'legacy-truthy? $ %{} 'CodeEntry
+          :doc "|Preserve legacy truthiness for values read from old stores."
+          :code $ quote $ defn legacy-truthy? (value)
+            if (bool? value) value $ not $ or (nil? value)
+              = (type-of value) :unit
+          :examples $ []
+          :schema $ quote $ Fn T (-> Bool) (:generics T)
+          :tests $ [] $ %{} 'TestEntry (:name |legacy-conditions)
+            :code $ quote $ do
+              assert= false $ legacy-truthy? nil
+              assert= false $ legacy-truthy? &unit
+              assert= false $ legacy-truthy? false
+              assert= true $ legacy-truthy? true
+              assert= true $ legacy-truthy? 0
+              assert= true $ legacy-truthy? |
+            :tags $ #{} :unit
+        'plugin-state-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn plugin-state-op (cursor state) (Op :plugin-state cursor state)
+          :examples $ []
+          :schema $ quote $ Fn (List respo.schema/CoordKey) (Map K V) (-> Op) (:generics K V)
         'read-code-view $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn read-code-view (raw)
             let
                 fields $ decode-map-as raw $ Map Tag Dynamic
                 note $ .and-then (get fields :note)
                   fn (value)
-                    if value
+                    if (legacy-truthy? value)
                       Some $ decode-map-as value String
                       , None
               CodeView :id
@@ -528,9 +559,7 @@
                       .unwrap $ get fields :time
                       , Number
                     , :note note :barcode?
-                      if
-                        .unwrap-or (get fields :barcode?) false
-                        , true false
+                      legacy-truthy? $ .unwrap-or (get fields :barcode?) false
                       , :format $ decode-barcode-format $ .unwrap-or (get fields :barcode-format) :code-128
           :examples $ []
           :schema $ quote $ Fn Input (-> CodeView) (:generics Input)
@@ -560,6 +589,7 @@
             decode-map-as
               match op
                 (:states cursor state) (update-states store cursor state)
+                (:plugin-state cursor state) (update-states store cursor state)
                 (:hydrate-storage value) value
                 (:add-code value)
                   -> store
@@ -586,7 +616,7 @@
                       (:gs1-128) :gs1-128
                 (:toggle-barcode id)
                   assoc-in store ([] :codes id :barcode?)
-                    not $ .unwrap-or
+                    schema/legacy-not $ .unwrap-or
                       get-in store $ [] :codes id :barcode?
                       , false
               Map Tag Dynamic

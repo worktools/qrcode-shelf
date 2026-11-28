@@ -9,7 +9,7 @@ test('updated barcode package still produces CODE128 binary encoding', () => {
 });
 import test from 'node:test';
 import * as clt from '../js-out/calcit.core.mjs';
-import { store, read_codes, Op, BarcodeFormat } from '../js-out/app.schema.mjs';
+import { store, read_codes, Op, BarcodeFormat, plugin_state_op, legacy_truthy_$q_ } from '../js-out/app.schema.mjs';
 import { updater } from '../js-out/app.updater.mjs';
 import { comp_container } from '../js-out/app.comp.container.mjs';
 import { new_reel, Control } from '../js-out/reel.typed.mjs';
@@ -87,4 +87,28 @@ test('clearing a note keeps the saved :note nil shape', () => {
   assert.equal(get(code, 'note'), null);
   const restored = clt.parse_cirru_edn(clt.format_cirru_edn(next));
   assert.equal(get(clt.option_$o_unwrap(clt.get(read_codes(restored), 'code-a')), 'note'), null);
+});
+
+
+test('legacy plugin state keeps nil, replacement semantics and EDN replay', () => {
+  const cursor = clt.parse_cirru_edn('[] :create');
+  const payload = clt.parse_cirru_edn('{} (:show? true) (:legacy nil) (:nested $ {} (:saved nil))');
+  const stale = clt.parse_cirru_edn('{} (:newer |discarded)');
+  const initial = clt.assoc_in(store, clt.parse_cirru_edn('[] :states :create :data'), stale);
+  const operation = plugin_state_op(cursor, payload);
+  const decoded = clt.parse_cirru_edn(clt.format_cirru_edn(operation));
+  assert.ok(clt._$e_(operation, decoded), 'plugin operation must survive EDN roundtrip');
+  const updated = updater(initial, decoded, 'plugin', 100);
+  const read = (v, key) => clt.option_$o_unwrap(clt.get(v, clt.to_tag(key)));
+  const state = read(read(read(updated, 'states'), 'create'), 'data');
+  assert.ok(clt._$e_(state, payload), 'update must replace the previous state');
+  assert.equal(clt.to_js_data(state).legacy, null);
+  assert.equal(clt.to_js_data(state).nested.saved, null);
+  const cleared = updater(updated, plugin_state_op(cursor, clt._$n__$M_()), 'clear', 101);
+  assert.deepEqual(clt.to_js_data(read(read(read(cleared, 'states'), 'create'), 'data')), {});
+});
+
+test('legacy field truthiness keeps falsey values distinct from zero and empty text', () => {
+  for (const value of [null, undefined, false]) assert.equal(legacy_truthy_$q_(value), false);
+  for (const value of [true, 0, '']) assert.equal(legacy_truthy_$q_(value), true);
 });
